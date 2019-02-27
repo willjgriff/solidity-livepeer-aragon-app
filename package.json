@@ -8,7 +8,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-preset-stage-3": "^6.17.0",
     "babel-register": "^6.23.0",
-    "ethereumjs-abi": "github:ethereumjs/ethereumjs-abi#09c3c48fd3bed143df7fa8f36f6f164205e23796",
+    "ethereumjs-abi": "^0.6.4",
     "ethereumjs-util": "^5.1.2",
     "truffle-keystore-provider": "^1.0.2",
     "zeppelin-solidity": "1.5.0"

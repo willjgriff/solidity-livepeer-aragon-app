@@ -2,10 +2,12 @@ import Fixture from "../livepeer-protocol/test/unit/helpers/Fixture"
 import ethUtil from "ethereumjs-util"
 import DaoDeployment from "./helpers/DaoDeployment"
 
+const { encodeCallScript } = require('@aragon/test-helpers/evmScript')
+const abi = require('ethereumjs-abi')
+
 const BondingManager = artifacts.require("BondingManager")
 const SortedDoublyLL = artifacts.require("SortedDoublyLL")
 const Agent = artifacts.require("Agent")
-const TestContract = artifacts.require("TestContract")
 
 contract("BondingManager through Agent", accounts => {
 
@@ -81,28 +83,38 @@ contract("BondingManager through Agent", accounts => {
 
     describe("bond(uint256 _amount, address _to) through execute(address _target, uint256 _ethValue, bytes _data)", () => {
 
-        const bonder = accounts[1]
+        const bondRequester = accounts[1]
         const currentRound = 100
 
-        const functionSig = (name) => ethUtil.bufferToHex(ethUtil.sha3(name).slice(0, 4))
+        beforeEach(async () => {
+            await fixture.roundsManager.setMockBool(functionSig("currentRoundInitialized()"), true)
+            await fixture.roundsManager.setMockBool(functionSig("currentRoundLocked()"), false)
+            await fixture.roundsManager.setMockUint256(functionSig("currentRound()"), currentRound)
+        })
 
         it("bonds successfully", async () => {
-            // await fixture.roundsManager.setMockBool(functionSig("currentRoundInitialized()"), true)
-            // await fixture.roundsManager.setMockBool(functionSig("currentRoundLocked()"), false)
-            // await fixture.roundsManager.setMockUint256(functionSig("currentRound()"), currentRound)
-            // const bondFunction = bondingManager.contract.methods.bond(1000, bonder).encodeABI()
+            const expectedTotalDelegated = 1000
+            const bondFunction = bondingManager.contract.methods.bond(expectedTotalDelegated, bondRequester).encodeABI()
 
-            const testContract = await TestContract.new()
-            const testFunction = testContract.contract.methods.increment().encodeABI()
+            await agent.execute(bondingManager.address, 0, bondFunction, { from: bondRequester })
 
-            // await daoDeployment.acl.createPermission(bonder, agent.address, EXECUTE_ROLE, owner, { from: owner })
-            // await daoDeployment.acl.grantPermission(bonder, agent.address, EXECUTE_ROLE, { from: owner })
-
-            // console.log("Has permission: " + await daoDeployment.acl.hasPermission(bonder, agent.address, EXECUTE_ROLE))
-            // console.log("param: " + await daoDeployment.acl.getPermissionParam(owner, agent.address, EXECUTE_ROLE, 0))
-
-            await agent.execute(testContract.address, 0, testFunction, { from: owner })
+            const actualTotalDelegated = (await bondingManager.getDelegator(bondRequester)).delegatedAmount
+            assert.equal(actualTotalDelegated, expectedTotalDelegated)
         })
+
+        it("bonds twice in the same transaction", async () => {
+            const expectedTotalDelegated = 1000
+            const bondAction = { to: bondingManager.address, calldata: bondingManager.contract.methods.bond(expectedTotalDelegated, bondRequester).encodeABI() }
+            const script = encodeCallScript([bondAction])
+
+            await agent.forward(script, { from: bondRequester })
+
+            const actualTotalDelegated = (await bondingManager.getDelegator(bondRequester)).delegatedAmount
+            assert.equal(actualTotalDelegated, expectedTotalDelegated * 2)
+        })
+
+
     })
 
+    const functionSig = (name) => ethUtil.bufferToHex(ethUtil.sha3(name).slice(0, 4))
 })
