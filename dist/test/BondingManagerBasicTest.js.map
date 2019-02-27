@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../test/BondingManagerBasicTest.js"],"names":["bondingManager","artifacts","require","BondingManager"],"mappings":";;AAAA,IAAMA,iBAAiBC,UAAUC,OAAV,CAAkBC,cAAlB,CAAvB","file":"BondingManagerBasicTest.js","sourcesContent":["const bondingManager = artifacts.require(BondingManager)\n\n\n"]}
