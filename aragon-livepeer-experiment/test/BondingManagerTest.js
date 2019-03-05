@@ -1,4 +1,4 @@
-import Fixture from "../livepeer-protocol/test/unit/helpers/Fixture"
+import Fixture from "../../livepeer-protocol/test/unit/helpers/Fixture"
 import ethUtil from "ethereumjs-util"
 import DaoDeployment from "./helpers/DaoDeployment"
 
