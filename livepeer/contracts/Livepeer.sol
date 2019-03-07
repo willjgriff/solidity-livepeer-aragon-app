@@ -1,8 +1,9 @@
 pragma solidity ^0.4.24;
 
-contract Livepeer {
+import "./misc/Agent.sol";
 
-    constructor() public {
+contract Livepeer is Agent {
 
-    }
+
+
 }
