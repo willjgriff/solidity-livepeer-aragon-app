@@ -1,9 +1,15 @@
 import React from "react"
-import { Text } from "@aragon/ui"
+import {Text, Button, observe} from "@aragon/ui"
 
-const LivepeerBalance = (props) => {
-    console.log(props)
-    return <Text size="normal">Livepeer token balance: {props.tokenBalance}</Text>
+const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
+    return (
+        <div>
+            <Text.Block size="normal">User LPT balance: {userLptBalance}</Text.Block>
+            <Text.Block size="normal">Apps LPT balance: {appsLptBalance}</Text.Block>
+        </div>
+    )
 }
 
-export { LivepeerBalance }
+const LivepeerBalanceObserve = observe((state$) => state$, {userLptBalance: 0, appsLptBalance: 0})(LivepeerBalance)
+
+export default LivepeerBalanceObserve
