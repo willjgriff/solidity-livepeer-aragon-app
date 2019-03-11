@@ -6,6 +6,7 @@
     "@aragon/apps-agent": "^1.0.1",
     "@aragon/apps-shared-minime": "^1.0.0",
     "@aragon/apps-token-manager": "2.0.0",
+    "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "2.0.0",
     "@aragon/client": "^1.1.0",
     "@aragon/os": "4.0.1",
@@ -15,6 +16,7 @@
     "external": "^1.0.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "rxjs": "5.5.12",
     "styled-components": "^3.4.10",
     "web3-eth-abi": "^1.0.0-beta.48"
   },
