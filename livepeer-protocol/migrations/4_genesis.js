@@ -1,5 +1,7 @@
 const genesis = require("./genesis.config.js")
-const BigNumber = require("bignumber.js")
+
+const BN = require("bn.js")
+
 const ContractDeployer = require("../utils/contractDeployer")
 const {contractId} = require("../utils/helpers")
 
@@ -32,8 +34,8 @@ module.exports = function(deployer, network, accounts) {
 
         let genesisManager
 
-        const currentTimestamp = new BigNumber((await getCurrentBlock()).timestamp)
-        const grantsStartTimestamp = currentTimestamp.plus(genesis.timeToGrantsStart)
+        const currentTimestamp = new BN((await getCurrentBlock()).timestamp)
+        const grantsStartTimestamp = currentTimestamp.add(genesis.timeToGrantsStart)
 
         if (!lpDeployer.isProduction(network)) {
             // If not in production, send the crowd supply to the faucet and the company supply to the deployment account
