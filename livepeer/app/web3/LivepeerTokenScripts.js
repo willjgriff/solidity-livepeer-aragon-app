@@ -1,16 +1,11 @@
-import {BondingManagerAddress} from "../config"
+import {LivepeerTokenAddress, BondingManagerAddress} from "../config"
 import {AbiCoder} from "web3-eth-abi"
 import LivepeerTokenApprove from "../abi/livepeerToken-approve.json"
 
-const abiCoder = new AbiCoder()
-
 const livepeerTokenApprove = (app, numberOfTokens) => {
+    const abiCoder = new AbiCoder()
     const encodedFunctionCall = abiCoder.encodeFunctionCall(LivepeerTokenApprove, [BondingManagerAddress, numberOfTokens])
-    app.execute(BondingManagerAddress, 0, encodedFunctionCall)
-        // .subscribe(
-        //     transaction => console.log(`Approved ${numberOfTokens} tokens for BondingManager to manage`),
-        //     error => console.log()
-        // )
+    app.execute(LivepeerTokenAddress, 0, encodedFunctionCall)
 }
 
 export default livepeerTokenApprove

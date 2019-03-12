@@ -1,14 +1,20 @@
 {
   "roles": [
     {
-      "name": "Increment the counter",
-      "id": "INCREMENT_ROLE",
-      "params": []
+      "name": "Execute a script",
+      "id": "EXECUTE_ROLE",
+      "params": [
+        "Target Address",
+        "Eth Value",
+        "Data Bytes"
+      ]
     },
     {
-      "name": "Decrement the counter",
-      "id": "DECREMENT_ROLE",
-      "params": []
+      "name": "Designate a signer",
+      "id": "RUN_SCRIPT_ROLE",
+      "params": [
+        "EVM Script"
+      ]
     }
   ],
   "environments": {
@@ -29,5 +35,5 @@
       "network": "mainnet"
     }
   },
-  "path": "contracts/Livepeer.sol"
+  "path": "node_modules/@aragon/apps-agent/contracts/Agent.sol"
 }

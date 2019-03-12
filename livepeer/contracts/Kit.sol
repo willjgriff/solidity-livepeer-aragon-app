@@ -20,7 +20,7 @@ import "@aragon/apps-voting/contracts/Voting.sol";
 import "@aragon/apps-token-manager/contracts/TokenManager.sol";
 import "@aragon/apps-shared-minime/contracts/MiniMeToken.sol";
 
-import "./Livepeer.sol";
+import "@aragon/apps-agent/contracts/Agent.sol";
 
 contract KitBase is APMNamehash {
     ENS public ens;
@@ -69,7 +69,8 @@ contract Kit is KitBase {
         bytes32 votingAppId = apmNamehash("voting");
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
 
-        Livepeer app = Livepeer(dao.newAppInstance(appId, latestVersionAppBase(appId)));
+        Agent app = Agent(dao.newAppInstance(appId, latestVersionAppBase(appId)));
+
         Voting voting = Voting(dao.newAppInstance(votingAppId, latestVersionAppBase(votingAppId)));
         TokenManager tokenManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
 
@@ -86,9 +87,13 @@ contract Kit is KitBase {
 
         acl.createPermission(ANY_ENTITY, voting, voting.CREATE_VOTES_ROLE(), root);
 
-        acl.createPermission(voting, app, app.INCREMENT_ROLE(), voting);
-        acl.createPermission(ANY_ENTITY, app, app.DECREMENT_ROLE(), root);
         acl.grantPermission(voting, tokenManager, tokenManager.MINT_ROLE());
+
+
+        // Agent Permissions
+        acl.createPermission(ANY_ENTITY, app, app.EXECUTE_ROLE(), ANY_ENTITY);
+        acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), ANY_ENTITY);
+
 
         // Clean up permissions
         acl.grantPermission(root, dao, dao.APP_MANAGER_ROLE());

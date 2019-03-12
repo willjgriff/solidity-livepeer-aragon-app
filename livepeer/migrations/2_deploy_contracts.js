@@ -1,5 +1,5 @@
-var Livepeer = artifacts.require('Livepeer.sol')
+const Agent = artifacts.require('Agent.sol')
 
 module.exports = function (deployer) {
-  deployer.deploy(Livepeer)
+  deployer.deploy(Agent)
 }
