@@ -1,4 +1,4 @@
-import BN from "bn.js";
+import BN from "../../../node_modules/bn.js/lib/bn";
 
 const expandTokenCount = (tokenCount) => new BN(tokenCount).mul(new BN(10).pow(new BN(18))).toString()
 

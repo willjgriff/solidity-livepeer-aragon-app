@@ -1,9 +1,9 @@
 import '@babel/polyfill'
 import Aragon from '@aragon/client'
-import LivepeerToken from './web3/LivepeerToken'
-import {LivepeerAppProxyAddress, BondingManagerAddress} from "./config";
+import LivepeerToken from '../web3/LivepeerToken'
+import {LivepeerAppProxyAddress, BondingManagerAddress} from "../config";
 import {of} from 'rxjs/observable/of'
-import { reduceTokenCount } from './src/utils'
+import { reduceTokenCount } from './lib/utils'
 
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()

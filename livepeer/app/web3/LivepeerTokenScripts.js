@@ -1,7 +1,7 @@
 import {LivepeerTokenAddress, BondingManagerAddress} from "../config"
 import {AbiCoder} from "web3-eth-abi"
 import LivepeerTokenApprove from "../abi/livepeerToken-approve.json"
-import {expandTokenCount} from "../src/utils";
+import {expandTokenCount} from "../src/lib/utils";
 
 const livepeerTokenApprove = (app, numberOfTokens) => {
     const abiCoder = new AbiCoder()
