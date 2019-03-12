@@ -1,5 +1,5 @@
 import React from "react"
-import {Text, Button, observe} from "@aragon/ui"
+import {Text, observe} from "@aragon/ui"
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
     return (

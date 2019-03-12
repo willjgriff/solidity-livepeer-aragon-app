@@ -1,8 +1,10 @@
 
-const LivepeerTokenAddress = "0xe62dD6F14E187E5D68E1192Aaa7815411Ee2BB2F"
-const BondingManagerAddress = "0x5A3561dfae1C5c91355d4952E48ED8d5264E2D41"
+// TODO: Put somewhere more common perhaps?
+const LivepeerTokenAddress = "0xA9086cB8dc782066E47cE906A3332399F8A4aE77"
+const BondingManagerAddress = "0x03ebf9D00375762B69aEdA8BD5f31bc3133a8D0e"
 
-const LivepeerAppProxyAddress = "0x7e9a5e62dcb87ea6b695939df0f79391ee4ba8ed"
+// TODO: Get during script init.
+const LivepeerAppProxyAddress = "0x0ee9cd9a28e76003fe71a80596cfb9f4e4e619ba"
 
 export {
     LivepeerTokenAddress,
