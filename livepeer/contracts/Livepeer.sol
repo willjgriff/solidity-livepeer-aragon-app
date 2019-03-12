@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
-// Had to flatten and manually import the Agent.sol due to npm dependency issues in the Vault.sol contract.
-import "./misc/Agent.sol";
+import "@aragon/apps-agent/contracts/Agent.sol";
 import "@aragon/os/contracts/lib/math/SafeMath.sol";
 
 contract Livepeer is Agent {

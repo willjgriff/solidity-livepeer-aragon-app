@@ -1,5 +1,5 @@
-import LivepeerTokenAbi from '../abi/LivepeerTokenAbi.json'
-import {LivepeerTokenAddress} from "../config";
+import LivepeerTokenAbi from '../abi/livepeerToken-abi.json'
+import {LivepeerTokenAddress} from "../config"
 
 const LivepeerToken = (app) => app.external(LivepeerTokenAddress, LivepeerTokenAbi)
 

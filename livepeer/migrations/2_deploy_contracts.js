@@ -1,5 +1,5 @@
-var CounterApp = artifacts.require('CounterApp.sol')
+var Livepeer = artifacts.require('Livepeer.sol')
 
 module.exports = function (deployer) {
-  deployer.deploy(CounterApp)
+  deployer.deploy(Livepeer)
 }

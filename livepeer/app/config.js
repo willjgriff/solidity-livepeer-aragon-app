@@ -1,10 +1,11 @@
 
-const LivepeerTokenAddress = "0xddBc988B7a79915Cf50C8a85a76cd107BC787496"
-const LivepeerAppProxyAddress = "0x9382117e603f4087a2383e24ef057306683b0277"
-const BondingManagerAddress = "0x9378C9bcF6F9e3AA437E8B4B122FfbC0c93261D3"
+const LivepeerTokenAddress = "0xe62dD6F14E187E5D68E1192Aaa7815411Ee2BB2F"
+const BondingManagerAddress = "0x5A3561dfae1C5c91355d4952E48ED8d5264E2D41"
+
+const LivepeerAppProxyAddress = "0x7e9a5e62dcb87ea6b695939df0f79391ee4ba8ed"
 
 export {
     LivepeerTokenAddress,
-    LivepeerAppProxyAddress,
-    BondingManagerAddress
+    BondingManagerAddress,
+    LivepeerAppProxyAddress
 }

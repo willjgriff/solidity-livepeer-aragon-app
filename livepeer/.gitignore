@@ -2,6 +2,3 @@ node_modules
 build
 dist
 .cache
-
-artifact.json
-code.sol
