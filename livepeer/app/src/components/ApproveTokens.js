@@ -1,15 +1,15 @@
 import React, { useState } from "react"
 import {Button, observe, TextInput, Text} from "@aragon/ui"
 
-const ApproveTokens = ({onApproveTokens, appApprovedTokens}) => {
+const ApproveTokens = ({ handleApproveTokens, appApprovedTokens}) => {
 
     const [approveTokenCount, setApproveTokenCount] = useState(0)
 
     return (
         <div>
+            <TextInput type="number" placeholder="Approve Tokens" onChange={event => setApproveTokenCount(event.target.value)}/>
+            <Button onClick={() => handleApproveTokens(approveTokenCount)}>Approve tokens for transfer</Button>
             <Text.Block size="normal">Tokens approved for Bonding Manager to spend on behalf of Livepeer App: {appApprovedTokens}</Text.Block>
-            <TextInput type="text" onChange={event => setApproveTokenCount(event.target.value)}/>
-            <Button onClick={() => onApproveTokens(approveTokenCount)}>Approve tokens for transfer</Button>
         </div>
     )
 }

@@ -1,6 +1,7 @@
 import '@babel/polyfill'
 import Aragon from '@aragon/client'
 import LivepeerToken from '../web3/LivepeerToken'
+import BondingManager from '../web3/BondingManager'
 import {LivepeerAppProxyAddress, BondingManagerAddress} from "../config";
 import {of} from 'rxjs/observable/of'
 import { reduceTokenCount } from './lib/utils'
@@ -8,42 +9,53 @@ import { reduceTokenCount } from './lib/utils'
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
 
-let appState = {
-    count: 0,
+let initialState = {
     userLptBalance: 0,
     appsLptBalance: 0,
-    appApprovedTokens: 0
+    appApprovedTokens: 0,
+    tokensBonded: 0
 }
-
-app.state().subscribe(state => appState = state)
 
 const onNewEvent = async (state, {event}) => {
 
     console.log("State Update")
     console.log(event)
 
-    if (state === null) state = appState
+    if (state === null) state = initialState
     switch (event) {
+        // TODO: Work out when the store emits, and why it emits loads on init, maybe due to cache/cookies?
         case INITIALISE_EMISSION:
         case 'Transfer':
             console.log("TRANSFER")
             return {
-                ...appState,
+                ...state,
                 userLptBalance: await userLptBalance$().toPromise(),
-                appsLptBalance: await appsLptBalance$().toPromise()
+                appsLptBalance: await appLptBalance$().toPromise()
             }
         case 'Approval':
             console.log("TOKS: " + await appApprovedTokens$().toPromise())
             return {
-                ...appState,
+                ...state,
                 appApprovedTokens: await appApprovedTokens$().toPromise()
+            }
+        case 'Bond':
+            console.log("BOND EVENT")
+            return {
+                ...state,
+                tokensBonded: await tokensBonded$().toPromise()
             }
         default:
             return state
     }
 }
 
-app.store(onNewEvent, [of({event: INITIALISE_EMISSION}), LivepeerToken(app).events()])
+app.store(onNewEvent,
+    [
+        of({event: INITIALISE_EMISSION}),
+        LivepeerToken(app).events(),
+        BondingManager(app).events()
+    ]
+)
 
 
 // TODO: Move the below somewhere ALSO make it so fractional values can be represented... Also maybe do conversion in the observe functions.
@@ -53,10 +65,17 @@ const userLptBalance$ = () =>
         .mergeMap(accounts => LivepeerToken(app).balanceOf(accounts[0]))
         .map(reduceTokenCount)
 
-const appsLptBalance$ = () =>
+const appLptBalance$ = () =>
     LivepeerToken(app).balanceOf(LivepeerAppProxyAddress)
         .map(reduceTokenCount)
 
 const appApprovedTokens$ = () =>
     LivepeerToken(app).allowance(LivepeerAppProxyAddress, BondingManagerAddress)
         .map(reduceTokenCount)
+
+const tokensBonded$ = () =>
+    BondingManager(app).getDelegator(LivepeerAppProxyAddress)
+        .map(delegator => {
+            console.log(delegator)
+            return delegator.bondedAmount
+        })
