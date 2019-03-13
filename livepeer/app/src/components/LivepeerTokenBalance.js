@@ -1,5 +1,6 @@
 import React from "react"
 import {Text, observe} from "@aragon/ui"
+import {fromDecimals} from "../lib/math-utils";
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
     return (
@@ -10,6 +11,15 @@ const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
     )
 }
 
-const LivepeerBalanceObserve = observe((state$) => state$, {userLptBalance: 0, appsLptBalance: 0})(LivepeerBalance)
+const LivepeerBalanceObserve = observe((state$) => state$.map(
+    state => {
+        const {userLptBalance, appsLptBalance} = state
+        return {
+            ...state,
+            userLptBalance: fromDecimals(userLptBalance, 18, false),
+            appsLptBalance: fromDecimals(appsLptBalance, 18, false)
+        }
+    }
+),{})(LivepeerBalance)
 
 export default LivepeerBalanceObserve

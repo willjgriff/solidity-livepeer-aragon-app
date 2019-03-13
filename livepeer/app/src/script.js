@@ -4,7 +4,6 @@ import LivepeerToken from '../web3/LivepeerToken'
 import BondingManager from '../web3/BondingManager'
 import {LivepeerAppProxyAddress, BondingManagerAddress} from "../config";
 import {of} from 'rxjs/observable/of'
-import { reduceTokenCount } from './lib/utils'
 
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
@@ -63,19 +62,13 @@ const userLptBalance$ = () =>
     app.accounts()
         .first()
         .mergeMap(accounts => LivepeerToken(app).balanceOf(accounts[0]))
-        .map(reduceTokenCount)
 
 const appLptBalance$ = () =>
     LivepeerToken(app).balanceOf(LivepeerAppProxyAddress)
-        .map(reduceTokenCount)
 
 const appApprovedTokens$ = () =>
     LivepeerToken(app).allowance(LivepeerAppProxyAddress, BondingManagerAddress)
-        .map(reduceTokenCount)
 
 const tokensBonded$ = () =>
     BondingManager(app).getDelegator(LivepeerAppProxyAddress)
-        .map(delegator => {
-            console.log(delegator)
-            return delegator.bondedAmount
-        })
+        .map(delegator => delegator.bondedAmount)

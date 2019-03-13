@@ -1,19 +1,27 @@
-import React, { useState } from "react"
+import React, {useState} from "react"
 import {Button, observe, TextInput, Text} from "@aragon/ui"
+import {fromDecimals} from '../lib/math-utils'
 
-const ApproveTokens = ({ handleApproveTokens, appApprovedTokens}) => {
+const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
 
     const [approveTokenCount, setApproveTokenCount] = useState(0)
 
     return (
         <div>
-            <TextInput type="number" placeholder="Approve Tokens" onChange={event => setApproveTokenCount(event.target.value)}/>
+            <TextInput type="number" placeholder="Approve Tokens"
+                       onChange={event => setApproveTokenCount(event.target.value)}/>
             <Button onClick={() => handleApproveTokens(approveTokenCount)}>Approve tokens for transfer</Button>
-            <Text.Block size="normal">Tokens approved for Bonding Manager to spend on behalf of Livepeer App: {appApprovedTokens}</Text.Block>
+            <Text.Block size="normal">Tokens approved for Bonding Manager to spend on behalf of Livepeer
+                App: {appApprovedTokens}</Text.Block>
         </div>
     )
 }
 
-const ApproveTokensObserve = observe(state$ => state$, {appApprovedTokens: 0})(ApproveTokens)
+const ApproveTokensObserve = observe(state$ => state$.map(state => {
+    return {
+        ...state,
+        appApprovedTokens: fromDecimals(state.appApprovedTokens, 18, false)
+    }
+}), {})(ApproveTokens)
 
 export default ApproveTokensObserve

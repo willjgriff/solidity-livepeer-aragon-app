@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import {Button, observe, TextInput, Text} from "@aragon/ui"
+import {fromDecimals} from "../lib/math-utils";
 
 const BondTokens = ({handleBondTokens, tokensBonded}) => {
 
@@ -19,6 +20,13 @@ const BondTokens = ({handleBondTokens, tokensBonded}) => {
     )
 }
 
-const BondTokensObserve = observe(state$ => state$, {tokensBonded: 0})(BondTokens)
+const BondTokensObserve = observe(state$ =>
+    state$.map(state => {
+        return {
+            ...state,
+            tokensBonded: fromDecimals(state.tokensBonded.toString(), 18, false)
+        }
+    }), {})
+(BondTokens)
 
 export default BondTokensObserve

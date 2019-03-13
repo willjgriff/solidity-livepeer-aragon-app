@@ -1,6 +1,6 @@
-const BigNumber = require("bignumber.js")
+const BN = require("bn.js")
 
-const TOKEN_UNIT = 10 ** 18
+const TOKEN_UNIT = new BN(10).pow(new BN(18))
 
 module.exports = {
     bondingManager: {
@@ -23,7 +23,7 @@ module.exports = {
         roundLockAmount: 100000
     },
     faucet: {
-        requestAmount: new BigNumber(10).mul(TOKEN_UNIT),
+        requestAmount: new BN(10).mul(TOKEN_UNIT),
         requestWait: 1,
         whitelist: []
     },
