@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
 import bondingManagerBond from "../web3/BondingManagerScripts"
+import approveAndBond from "../web3/ApproveAndBondScripts"
 
 import LivepeerBalance from "./components/LivepeerTokenBalance"
 import ApproveTokens from "./components/ApproveTokens"
@@ -21,6 +22,8 @@ export default class App extends React.Component {
 
     bondTokens = (tokenCount, bondToAddress) => bondingManagerBond(this.props.app, tokenCount, bondToAddress)
 
+    approveAndBond = (tokenCount, bondToAddress) => approveAndBond(this.props.app, tokenCount, bondToAddress)
+
     render() {
         return (
             <AppContainer>
@@ -29,7 +32,7 @@ export default class App extends React.Component {
                     <hr/>
                     <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
                     <hr/>
-                    <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}/>
+                    <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens} handleApproveAndBond={this.approveAndBond}/>
                 </div>
             </AppContainer>
         )
