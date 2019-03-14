@@ -26,7 +26,7 @@ const BondTokensObserve = observe(state$ =>
             ...state,
             tokensBonded: fromDecimals(state.tokensBonded.toString(), 18, false)
         }
-    }), {})
+    }), {tokensBonded: 0})
 (BondTokens)
 
 export default BondTokensObserve

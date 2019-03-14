@@ -41,7 +41,10 @@ const onNewEvent = async (state, {event}) => {
             console.log("BOND EVENT")
             return {
                 ...state,
-                tokensBonded: await tokensBonded$().toPromise()
+                tokensBonded: await tokensBonded$().toPromise(),
+                appApprovedTokens: await appApprovedTokens$().toPromise(),
+                appsLptBalance: await appLptBalance$().toPromise()
+
             }
         default:
             return state

@@ -16,10 +16,10 @@ const LivepeerBalanceObserve = observe((state$) => state$.map(
         const {userLptBalance, appsLptBalance} = state
         return {
             ...state,
-            userLptBalance: fromDecimals(userLptBalance, 18, false),
-            appsLptBalance: fromDecimals(appsLptBalance, 18, false)
+            userLptBalance: fromDecimals(userLptBalance.toString(), 18, false),
+            appsLptBalance: fromDecimals(appsLptBalance.toString(), 18, false)
         }
     }
-),{})(LivepeerBalance)
+),{userLptBalance: 0, appsLptBalance: 0})(LivepeerBalance)
 
 export default LivepeerBalanceObserve
