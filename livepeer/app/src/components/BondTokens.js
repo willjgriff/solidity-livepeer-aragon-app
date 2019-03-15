@@ -15,8 +15,8 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
             <TextInput type="number" placeholder="Tokens"
                        onChange={event => setBondTokenCount(event.target.value)}/>
 
-            <Button mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve and bond to
-                address</Button>
+            <Button mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve and bond
+                to address</Button>
 
             <Button onClick={() => handleBondTokens(bondTokenCount, bondToAddress)}>Bond to address</Button>
 
@@ -25,13 +25,12 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
     )
 }
 
-const BondTokensObserve = observe(state$ =>
-    state$.map(state => {
-        return {
-            ...state,
-            tokensBonded: fromDecimals(state.tokensBonded.toString(), 18, false)
-        }
-    }), {tokensBonded: 0})
+const BondTokensObserve = observe(state$ => state$.map(state => {
+    return state === null ? state : {
+        ...state,
+        tokensBonded: fromDecimals(state.tokensBonded.toString(), 18, false)
+    }
+}), {tokensBonded: 0})
 (BondTokens)
 
 export default BondTokensObserve

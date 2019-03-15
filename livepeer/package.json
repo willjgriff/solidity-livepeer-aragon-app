@@ -14,6 +14,7 @@
     "@aragon/wrapper": "^4.0.0-beta.1",
     "bn.js": "^4.11.8",
     "ethereumjs-abi": "^0.6.6",
+    "ethereumjs-util": "^6.1.0",
     "external": "^1.0.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",

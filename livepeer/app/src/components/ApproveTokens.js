@@ -18,7 +18,7 @@ const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
 }
 
 const ApproveTokensObserve = observe(state$ => state$.map(state => {
-    return {
+    return state === null ? state : {
         ...state,
         appApprovedTokens: fromDecimals(state.appApprovedTokens.toString(), 18, false)
     }
