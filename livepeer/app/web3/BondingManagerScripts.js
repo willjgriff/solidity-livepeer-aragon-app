@@ -18,7 +18,7 @@ const bondingManagerUnbond = (app, numberOfTokens) => {
 
     const convertedTokenCount = toDecimals(numberOfTokens, 18, false)
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerUnbondAbi, [convertedTokenCount])
-    
+
     app.execute(BONDING_MANAGER_ADDRESS, 0, encodedFunctionCall)
 }
 

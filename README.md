@@ -17,4 +17,28 @@ The full livepeer contract deployment for testing locally. Modified to compile w
 ### livepeer
 The in development Livepeer Aragon app using the Aragon agent. Uses the Aragon `react-kit` template. Currently includes ability to approve tokens and bond to the BondingManager. 
 
-Testing and usage instructions to follow soon...
+## Local Deployment Instructions
+
+Install dependencies:  
+```npm install -g truffle```  
+```npm install -g @aragon/cli```  
+```npm install``` (In project directory)
+
+Startup local chain and IPFS, in separate terminals run:  
+```aragon devchain```  
+```aragon ipfs```
+
+Prepare livepeer contracts, execute these in `livepeer-protocol` directory:  
+```truffle migrate```  
+```truffle exec scripts/initialiseRound.js```
+
+Deploy Aragon Dao, execute these in `livepeer` directory (Note these steps will change in future once the configuration process has been streamlined):  
+```npm run start:app``` (Starts a server hosting the web files for the Livepeer Aragon app)  
+```npm run start:aragon:http:kit``` (Publishes the Livepeer Aragon app and deploys an Aragon DAO to the local Ethereum testnet)
+
+Copy the following addresses to the configuration file found at `livepeer/app/config.js` (Note this step will be reduced or removed in future):  
+Relevant Livepeer addresses from the Livepeer deployment output. Use the BondingManager proxy address for the config.BONDING_MANAGER_ADDRESS (Do not use the BondingManager base address)    
+Livepeer Aragon app proxy address found with `dao apps daoAddress` (daoAddress can be found after creating the dao with `npm run start:aragon:http:kit`)
+
+Update the dist script file, execute this in `livepeer` (to update the app hosting server with the updated config addresses):  
+```npm run build:script```
