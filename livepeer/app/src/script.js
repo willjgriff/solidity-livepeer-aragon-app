@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 import Aragon from '@aragon/client'
-import {BondingManager, LivepeerToken, LivepeerToken$, BondingManager$} from '../web3/ExternalContracts'
-import {LIVEPEER_APP_PROXY_ADDRESS, BONDING_MANAGER_ADDRESS} from "../config";
+import {livepeerToken$, bondingManager$, roundsManager$, bondingManagerAddress$} from '../web3/ExternalContracts'
+import {LIVEPEER_APP_PROXY_ADDRESS} from "../config";
 import {of} from 'rxjs/observable/of'
 
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
@@ -16,8 +16,20 @@ let defaultState = {
     currentRound: 0
 }
 
+const initialState = async (state) => {
+    return {
+        ...state,
+        userLptBalance: await userLptBalance$().toPromise(),
+        appsLptBalance: await appLptBalance$().toPromise(),
+        appApprovedTokens: await appApprovedTokens$().toPromise(),
+        tokensBonded: await tokensBonded$().toPromise(),
+        unbondingWithdrawRound: await unbondingWithdrawRound$().toPromise(),
+        currentRound: await currentRound$().toPromise()
+    }
+}
+
 const onNewEvent = async (state, {event}) => {
-    console.log("State Update")
+    // console.log("State Update")
 
     if (state === null) state = defaultState
     switch (event) {
@@ -50,6 +62,7 @@ const onNewEvent = async (state, {event}) => {
             console.log("UNBOND EVENT")
             return {
                 ...state,
+                tokensBonded: await tokensBonded$().toPromise(),
                 unbondingWithdrawRound: await unbondingWithdrawRound$().toPromise()
             }
         default:
@@ -60,49 +73,38 @@ const onNewEvent = async (state, {event}) => {
 app.store(onNewEvent,
     [
         of({event: INITIALISE_EMISSION}),
-        LivepeerToken(app).events(),
-        BondingManager(app).events()
+        livepeerToken$(app).mergeMap(livepeerToken => livepeerToken.events()),
+        bondingManager$(app).mergeMap(bondingManager => bondingManager.events())
     ]
 )
-
-// Reminder: if one fails they all fail!
-const initialState = async (state) => {
-    return {...state,
-        userLptBalance: await userLptBalance$().toPromise(),
-        appsLptBalance: await appLptBalance$().toPromise(),
-        appApprovedTokens: await appApprovedTokens$().toPromise(),
-        tokensBonded: await tokensBonded$().toPromise(),
-        unbondingInfo: await unbondingWithdrawRound$().toPromise()
-    }
-}
 
 const userLptBalance$ = () =>
     app.accounts()
         .first()
-        .zip(LivepeerToken$(app))
+        .zip(livepeerToken$(app))
         .mergeMap(([accounts, token]) => token.balanceOf(accounts[0]))
 
 const appLptBalance$ = () =>
-    LivepeerToken$(app)
+    livepeerToken$(app)
         .mergeMap(token => token.balanceOf(LIVEPEER_APP_PROXY_ADDRESS))
 
-// TODO: Get BondingManagerAddress from observable.
 const appApprovedTokens$ = () =>
-    LivepeerToken$(app)
-        .mergeMap(token => token.allowance(LIVEPEER_APP_PROXY_ADDRESS, BONDING_MANAGER_ADDRESS))
+    livepeerToken$(app)
+        .zip(bondingManagerAddress$(app))
+        .mergeMap(([token, bondingManagerAddress]) => token.allowance(LIVEPEER_APP_PROXY_ADDRESS, bondingManagerAddress))
 
 const tokensBonded$ = () =>
-    BondingManager$(app)
-        .do(asdc => console.log("TOKS BONDO"))
+    bondingManager$(app)
         .mergeMap(bondingManager => bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS))
-        .do(asdc => console.log(asdc))
         .map(delegator => delegator.bondedAmount)
 
 const unbondingWithdrawRound$ = () =>
-    BondingManager$(app)
+    bondingManager$(app)
         .mergeMap(bondingManager =>
             bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS)
-                .mergeMap(delegator => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, delegator.nextUnbondingLockId)))
+                .mergeMap(delegator => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, delegator.nextUnbondingLockId - 1)))
         .map(unbondingInfo => unbondingInfo.withdrawRound)
 
-// const currentRound$ = () =>
+const currentRound$ = () =>
+    roundsManager$(app)
+        .mergeMap(roundsManager => roundsManager.currentRound())

@@ -3,7 +3,7 @@ const AdjustableRoundsManager = artifacts.require("AdjustableRoundsManager")
 
 const {contractId} = require("../utils/helpers")
 
-const roundLength = 5760;
+const roundLength = 10 // blocks. Actual value is 5760 ~ 24 hours
 
 module.exports = async () => {
     let controller
