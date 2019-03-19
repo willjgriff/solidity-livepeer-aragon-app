@@ -8,13 +8,14 @@ import {range} from 'rxjs/observable/range'
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
 
+// Mainly for a complete perspective of the state, should probably remove the unbondingLockInfos list item.
 let defaultState = {
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
     tokensBonded: 0,
-    unbondingWithdrawRound: 0,
-    currentRound: 0
+    currentRound: 0,
+    unbondingLockInfos: [{amount: 0, withdrawRound: 0, id: -1, disableWithdraw: true}]
 }
 
 const initialState = async (state) => {
@@ -67,6 +68,13 @@ const onNewEvent = async (state, {event}) => {
                 tokensBonded: await tokensBonded$().toPromise(),
                 unbondingLockInfos: await unbondingLockInfos$().toPromise()
             }
+        case 'NewRound':
+            console.log("NEW ROUND")
+            return {
+                ...state,
+                currentRound: await currentRound$().toPromise(),
+                unbondingLockInfos: await unbondingLockInfos$().toPromise()
+            }
         default:
             return state
     }
@@ -76,7 +84,8 @@ app.store(onNewEvent,
     [
         of({event: INITIALISE_EMISSION}),
         livepeerToken$(app).mergeMap(livepeerToken => livepeerToken.events()),
-        bondingManager$(app).mergeMap(bondingManager => bondingManager.events())
+        bondingManager$(app).mergeMap(bondingManager => bondingManager.events()),
+        roundsManager$(app).mergeMap(roundsManager => roundsManager.events())
     ]
 )
 
@@ -106,10 +115,16 @@ const currentRound$ = () =>
 
 const unbondingLockInfos$ = () =>
     bondingManager$(app)
-        .mergeMap(bondingManager =>
-            bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS)
-                .mergeMap(delegator => range(0, delegator.nextUnbondingLockId))
-                .mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, unbondingLockId)
-                    .map(unbondingLockInfo => { return {...unbondingLockInfo, id:unbondingLockId}})))
+        .mergeMap(mapBondingManagerToLockInfo)
+        .filter(unbondingLockInfo => unbondingLockInfo.amount !== 0)
         .toArray()
+        .do(console.log)
+
+const mapBondingManagerToLockInfo = bondingManager =>
+    bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS)
+        .zip(currentRound$())
+        .mergeMap(([delegator, currentRound]) => range(0, delegator.nextUnbondingLockId)
+            .mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, unbondingLockId)
+                .map(unbondingLockInfo => {return {...unbondingLockInfo, id: unbondingLockId}}))
+            .map(unbondingLockInfo => {return {...unbondingLockInfo, disableWithdraw: currentRound < unbondingLockInfo.withdrawRound}}))
 

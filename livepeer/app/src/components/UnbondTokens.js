@@ -26,7 +26,7 @@ const UnbondTokensObserve = observe(state$ => state$.map(state => {
         }
     }
 
-    return {
+    return state === null ? state : {
         ...state,
         unbondingLockInfos: state.unbondingLockInfos.map(adjustedUnbondingLockInfo)
     }

@@ -3,6 +3,8 @@ const AdjustableRoundsManager = artifacts.require("AdjustableRoundsManager")
 
 const {contractId} = require("../utils/helpers")
 
+const SKIP_ROUNDS_COUNT = 1;
+
 module.exports = async () => {
     let controller
     let roundsManager
@@ -16,7 +18,7 @@ module.exports = async () => {
 
     const roundLength = await roundsManager.roundLength()
 
-    const mineBlocksReceipt = await roundsManager.mineBlocks(roundLength)
+    const mineBlocksReceipt = await roundsManager.mineBlocks(roundLength * SKIP_ROUNDS_COUNT)
     console.log("Skip forward blocks: " + mineBlocksReceipt.tx)
 
     const initializeRoundTxHash = await roundsManager.initializeRound()
