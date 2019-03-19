@@ -1,20 +1,38 @@
-import React, { useState }  from "react"
+import React, {useState} from "react"
 import {Button, observe, Text, TextInput} from "@aragon/ui"
+import {fromDecimals} from "../lib/math-utils";
+import UnbondingLockItems from "./UnbondingLockItems"
 
-const UnbondTokens = ({handleUnbondTokens, unbondingWithdrawRound, currentRound}) => {
+const UnbondTokens = ({handleUnbondTokens, currentRound, unbondingLockInfos}) => {
 
     const [unbondTokenCount, setUnbondTokenCount] = useState(0)
 
-    // TODO: Requires a list of unbondingLockId info's
     return (
         <div>
             <TextInput type="number" placeholder="Tokens" onChange={event => setUnbondTokenCount(event.target.value)}/>
             <Button mode="strong" onClick={() => handleUnbondTokens(unbondTokenCount)}>Unbond tokens</Button>
-            <Text.Block>Unbond withdraw round for most recent unbond request: {unbondingWithdrawRound} (current round: {currentRound})</Text.Block>
+            <Text>&nbsp;&nbsp;&nbsp;Current round: {currentRound}</Text>
+            <UnbondingLockItems unbondingLockInfos={unbondingLockInfos}/>
         </div>
     )
 }
 
-const UnbondTokensObserve = observe(state$ => state$, {unbondingWithdrawRound: 0, currentRound: 0})(UnbondTokens)
+const UnbondTokensObserve = observe(state$ => state$.map(state => {
+
+    const adjustedUnbondingLockInfo = unbondingLockInfo => {
+        return {
+            ...unbondingLockInfo,
+            amount: fromDecimals(unbondingLockInfo.amount, 18)
+        }
+    }
+
+    return {
+        ...state,
+        unbondingLockInfos: state.unbondingLockInfos.map(adjustedUnbondingLockInfo)
+    }
+}), {
+    currentRound: 0,
+    unbondingLockInfos: []
+})(UnbondTokens)
 
 export default UnbondTokensObserve
