@@ -1,4 +1,3 @@
-import {BONDING_MANAGER_ADDRESS} from "../config"
 import {AbiCoder} from "web3-eth-abi"
 import BondingManagerBondAbi from "../abi/bondingManager-bond.json"
 import BondingManagerUnbondAbi from "../abi/bondingManager-unbond.json"

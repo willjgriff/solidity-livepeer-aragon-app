@@ -5,6 +5,8 @@ import RoundsManagerAbi from '../abi/roundsManager-abi'
 import {CONTROLLER_ADDRESS} from "../config"
 import {contractId} from './utils/livepeerHelpers'
 
+//TODO: Convert to an object and return const observables with shareReplay(1) or use memoirzation, could reduce load time.
+// Perhaps put this off until we get errors in app.store(). Had problems with accessing 2 observables from this object at the same time.
 const controller = (app) => app.external(CONTROLLER_ADDRESS, ControllerAbi)
 
 const livepeerAddressOf$ = (app, livepeerContractName) => controller(app).getContract(contractId(livepeerContractName))
@@ -22,10 +24,12 @@ const livepeerToken$ = (app) =>
 
 const bondingManager$ = (app) =>
     bondingManagerAddress$(app)
+        .do(address => console.log("BondingManager address: " + address))
         .map(address => app.external(address, BondingManagerAbi))
 
 const roundsManager$ = (app) =>
     roundsManagerAddress$(app)
+        .do(address => console.log("RoundsManager address: " + address))
         .map(address => app.external(address, RoundsManagerAbi))
 
 export {

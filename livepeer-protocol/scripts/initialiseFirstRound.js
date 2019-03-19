@@ -22,7 +22,7 @@ module.exports = async () => {
     roundsManager = await AdjustableRoundsManager.at(roundsManagerAddr)
 
     const setRoundReceipt = await roundsManager.setRoundLength(roundLength)
-    console.log("Round length set: " + setRoundReceipt.tx)
+    console.log("Round length set to: " + roundLength + " tx: " + setRoundReceipt.tx)
 
     const mineBlocksReceipt = await roundsManager.mineBlocks(roundLength)
     console.log("Skip forward blocks: " + mineBlocksReceipt.tx)

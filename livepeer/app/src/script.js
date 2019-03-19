@@ -33,7 +33,7 @@ const onNewEvent = async (state, {event}) => {
 
     if (state === null) state = defaultState
     switch (event) {
-        // TODO: Work out when the store emits, and why it emits loads on init, maybe due to cache/cookies?
+        // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
         case INITIALISE_EMISSION:
             console.log("INITIALISE")
             return await initialState(state)
@@ -45,13 +45,13 @@ const onNewEvent = async (state, {event}) => {
                 appsLptBalance: await appLptBalance$().toPromise()
             }
         case 'Approval':
-            console.log("TOKS: " + await appApprovedTokens$().toPromise())
+            console.log("APPROVAL")
             return {
                 ...state,
                 appApprovedTokens: await appApprovedTokens$().toPromise()
             }
         case 'Bond':
-            console.log("BOND EVENT")
+            console.log("BOND")
             return {
                 ...state,
                 tokensBonded: await tokensBonded$().toPromise(),
@@ -59,7 +59,7 @@ const onNewEvent = async (state, {event}) => {
                 appsLptBalance: await appLptBalance$().toPromise()
             }
         case 'Unbond':
-            console.log("UNBOND EVENT")
+            console.log("UNBOND")
             return {
                 ...state,
                 tokensBonded: await tokensBonded$().toPromise(),
