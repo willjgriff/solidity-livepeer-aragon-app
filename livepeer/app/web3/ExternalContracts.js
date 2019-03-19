@@ -19,17 +19,17 @@ const roundsManagerAddress$ = (app) => livepeerAddressOf$(app, "RoundsManager")
 
 const livepeerToken$ = (app) =>
     livepeerTokenAddress$(app)
-        .do(address => console.log("LivepeerToken address: " + address))
+        // .do(address => console.log("LivepeerToken address: " + address))
         .map(address => app.external(address, LivepeerTokenAbi))
 
 const bondingManager$ = (app) =>
     bondingManagerAddress$(app)
-        .do(address => console.log("BondingManager address: " + address))
+        // .do(address => console.log("BondingManager address: " + address))
         .map(address => app.external(address, BondingManagerAbi))
 
 const roundsManager$ = (app) =>
     roundsManagerAddress$(app)
-        .do(address => console.log("RoundsManager address: " + address))
+        // .do(address => console.log("RoundsManager address: " + address))
         .map(address => app.external(address, RoundsManagerAbi))
 
 export {

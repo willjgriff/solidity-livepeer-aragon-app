@@ -3,7 +3,7 @@ import { AragonApp } from '@aragon/ui'
 import styled from 'styled-components'
 
 import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
-import {bondingManagerBond, bondingManagerUnbond} from "../web3/BondingManagerScripts"
+import {bondingManagerBond, bondingManagerUnbond, bondingManagerWithdraw} from "../web3/BondingManagerScripts"
 import approveAndBond from "../web3/ApproveAndBondScripts"
 
 import LivepeerBalance from "./components/LivepeerTokenBalance"
@@ -27,6 +27,8 @@ export default class App extends React.Component {
 
     unbondTokens = (tokenCount) => bondingManagerUnbond(this.props.app, tokenCount)
 
+    withdrawTokens = (unbondingLockId) => bondingManagerWithdraw(this.props.app, unbondingLockId)
+
     render() {
         return (
             <AppContainer>
@@ -37,7 +39,7 @@ export default class App extends React.Component {
                     <hr/>
                     <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens} handleApproveAndBond={this.approveAndBond}/>
                     <hr/>
-                    <UnbondTokens observable={this.props.observable} handleUnbondTokens={this.unbondTokens}/>
+                    <UnbondTokens observable={this.props.observable} handleUnbondTokens={this.unbondTokens} handleWithdrawTokens={this.withdrawTokens}/>
                 </div>
             </AppContainer>
         )

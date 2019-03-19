@@ -8,14 +8,14 @@ import {range} from 'rxjs/observable/range'
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
 
-// Mainly for a complete perspective of the state, should probably remove the unbondingLockInfos list item.
+// Mainly for a complete perspective of the state.
 let defaultState = {
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
     tokensBonded: 0,
     currentRound: 0,
-    unbondingLockInfos: [{amount: 0, withdrawRound: 0, id: -1, disableWithdraw: true}]
+    unbondingLockInfos: []
 }
 
 const initialState = async (state) => {
@@ -75,6 +75,13 @@ const onNewEvent = async (state, {event}) => {
                 currentRound: await currentRound$().toPromise(),
                 unbondingLockInfos: await unbondingLockInfos$().toPromise()
             }
+        case 'WithdrawStake':
+            console.log("WITHDRAW STAKE")
+            return {
+                ...state,
+                unbondingLockInfos: await unbondingLockInfos$().toPromise(),
+                appsLptBalance: await appLptBalance$().toPromise()
+            }
         default:
             return state
     }
@@ -116,9 +123,8 @@ const currentRound$ = () =>
 const unbondingLockInfos$ = () =>
     bondingManager$(app)
         .mergeMap(mapBondingManagerToLockInfo)
-        .filter(unbondingLockInfo => unbondingLockInfo.amount !== 0)
+        .filter(unbondingLockInfo => parseInt(unbondingLockInfo.amount) !== 0)
         .toArray()
-        .do(console.log)
 
 const mapBondingManagerToLockInfo = bondingManager =>
     bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS)
@@ -126,5 +132,5 @@ const mapBondingManagerToLockInfo = bondingManager =>
         .mergeMap(([delegator, currentRound]) => range(0, delegator.nextUnbondingLockId)
             .mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, unbondingLockId)
                 .map(unbondingLockInfo => {return {...unbondingLockInfo, id: unbondingLockId}}))
-            .map(unbondingLockInfo => {return {...unbondingLockInfo, disableWithdraw: currentRound < unbondingLockInfo.withdrawRound}}))
+            .map(unbondingLockInfo => {return {...unbondingLockInfo, disableWithdraw: parseInt(currentRound) < parseInt(unbondingLockInfo.withdrawRound)}}))
 

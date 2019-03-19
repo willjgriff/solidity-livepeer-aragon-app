@@ -1,6 +1,7 @@
 import {AbiCoder} from "web3-eth-abi"
-import BondingManagerBondAbi from "../abi/bondingManager-bond.json"
-import BondingManagerUnbondAbi from "../abi/bondingManager-unbond.json"
+import BondingManagerBondAbi from "../abi/bondingManager-bond"
+import BondingManagerUnbondAbi from "../abi/bondingManager-unbond"
+import BondingManagerWithdrawStake from "../abi/bondingManager-withdrawStake"
 import {toDecimals} from "../src/lib/math-utils";
 import {bondingManagerAddress$} from "./ExternalContracts";
 
@@ -26,4 +27,14 @@ const bondingManagerUnbond = (app, numberOfTokens) => {
         .subscribe()
 }
 
-export {bondingManagerBond, bondingManagerUnbond}
+const bondingManagerWithdraw = (app, unbondingLockId) => {
+    const abiCoder = new AbiCoder()
+
+    const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerWithdrawStake, [unbondingLockId])
+
+    bondingManagerAddress$(app)
+        .mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall))
+        .subscribe()
+}
+
+export {bondingManagerBond, bondingManagerUnbond, bondingManagerWithdraw}
