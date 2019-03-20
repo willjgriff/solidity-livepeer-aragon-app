@@ -10,6 +10,7 @@ const app = new Aragon()
 
 // Mainly for a complete perspective of the state.
 let defaultState = {
+    appAddress: "0xABCD...",
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
@@ -21,6 +22,8 @@ let defaultState = {
 const initialState = async (state) => {
     return {
         ...state,
+        // TODO: Get from an initial event somehow.
+        appAddress: LIVEPEER_APP_PROXY_ADDRESS,
         userLptBalance: await userLptBalance$().toPromise(),
         appsLptBalance: await appLptBalance$().toPromise(),
         appApprovedTokens: await appApprovedTokens$().toPromise(),
@@ -30,7 +33,6 @@ const initialState = async (state) => {
     }
 }
 
-//TODO: Add rounds manager events to listen for new round.
 const onNewEvent = async (state, {event}) => {
     // console.log("State Update")
 
@@ -95,6 +97,8 @@ app.store(onNewEvent,
         roundsManager$(app).mergeMap(roundsManager => roundsManager.events())
     ]
 )
+
+//TODO: Get BondedToAddress
 
 const userLptBalance$ = () =>
     app.accounts()

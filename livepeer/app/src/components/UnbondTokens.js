@@ -1,5 +1,6 @@
 import React, {useState} from "react"
 import {Button, observe, Text, TextInput} from "@aragon/ui"
+import styled from 'styled-components'
 import {fromDecimals} from "../lib/math-utils";
 import UnbondingLockItems from "./UnbondingLockItems"
 

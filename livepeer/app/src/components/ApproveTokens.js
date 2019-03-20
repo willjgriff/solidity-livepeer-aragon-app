@@ -6,10 +6,12 @@ import {fromDecimals} from '../lib/math-utils'
 const ApproveTokensContainer = styled.div`
     display: flex;
     flex-direction: column;
+    margin-right: 30px
 `
 const ApprovedTokensCard = styled(Card)`
     padding: 10px;
     height: auto;
+    margin-top: 10px;
 `
 const ApproveAndButton = styled.div`
     display: flex;
@@ -29,11 +31,9 @@ const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
         <ApproveTokensContainer>
             <Text.Block size="normal" weight="bold">Bonding Manager Approved Tokens</Text.Block>
 
-
-                <ApprovedTokensCard>
-                    <Text.Block size="normal">{appApprovedTokens}</Text.Block>
-                </ApprovedTokensCard>
-
+            <ApprovedTokensCard>
+                <Text.Block size="normal">{appApprovedTokens}</Text.Block>
+            </ApprovedTokensCard>
 
             <ApproveAndButton>
 
@@ -41,6 +41,7 @@ const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
                     <TextInput type="number"
                                onChange={event => setApproveTokenCount(event.target.value)}/>
                 </ApproveInput>
+
                 <Button mode="outline" onClick={() => handleApproveTokens(approveTokenCount)}>Approve Tokens</Button>
 
             </ApproveAndButton>

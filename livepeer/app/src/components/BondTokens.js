@@ -1,6 +1,45 @@
 import React, {useState} from "react"
-import {Button, observe, TextInput, Text} from "@aragon/ui"
+import {Button, observe, TextInput, Text, Field, Card} from "@aragon/ui"
+import styled from 'styled-components'
 import {fromDecimals} from "../lib/math-utils";
+
+const BondTokensContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+
+const BondInputFields = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+`
+
+const BondedTokensCard = styled(Card)`
+    display: flex;
+    white-space: nowrap;
+    height: auto;
+    width: auto;
+    padding: 10px;
+    margin-top: 10px;
+`
+
+const BondButtons = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`
+
+const BondAndApproveButton = styled(Button)`
+    margin-right: 20px;
+`
+
+const BondTokensField = styled(Field)`
+    margin-right: 20px;
+`
+
+const BondToAddressField = styled(Field)`
+    width: 100%;
+`
 
 const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
 
@@ -8,20 +47,35 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
     const [bondToAddress, setBondToAddress] = useState(0)
 
     return (
-        <div>
-            <TextInput type="text" wide="true" placeholder="Address"
-                       onChange={event => setBondToAddress(event.target.value)}/>
+        <BondTokensContainer>
 
-            <TextInput type="number" placeholder="Tokens"
-                       onChange={event => setBondTokenCount(event.target.value)}/>
+            <Text.Block size="normal" weight="bold">Bonded Tokens</Text.Block>
 
-            <Button mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve and bond
-                to address</Button>
+            <BondedTokensCard>
+                <Text.Block>{tokensBonded} LPT bonded to 0x9cdd952fd5d4623de3549ecf6e06a650ec3eda0a</Text.Block>
+            </BondedTokensCard>
 
-            <Button onClick={() => handleBondTokens(bondTokenCount, bondToAddress)}>Bond to address</Button>
+            <BondInputFields>
+                <BondTokensField label="Bond Tokens:">
+                    <TextInput type="number"
+                               onChange={event => setBondTokenCount(event.target.value)}/>
+                </BondTokensField>
 
-            <Text.Block>Tokens bonded: {tokensBonded}</Text.Block>
-        </div>
+                <BondToAddressField label="Bond to Address:">
+                    <TextInput wide="true" type="text"
+                               onChange={event => setBondToAddress(event.target.value)}/>
+                </BondToAddressField>
+            </BondInputFields>
+
+            <BondButtons>
+                <BondAndApproveButton mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve and
+                    bond to address</BondAndApproveButton>
+
+                <Button mode="outline" onClick={() => handleBondTokens(bondTokenCount, bondToAddress)}>Bond to
+                    address</Button>
+            </BondButtons>
+
+        </BondTokensContainer>
     )
 }
 

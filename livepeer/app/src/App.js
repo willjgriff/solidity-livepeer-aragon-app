@@ -20,9 +20,10 @@ const AppContainer = styled(Main)`
 const BalanceApprovalContainer = styled.div`
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
 `
 
-// TODO: Add defaultProps and propTypes to components. Extract strings.
+// TODO: Add defaultProps and propTypes to components. Extract strings. Extract common spacing (px values).
 export default class App extends React.Component {
 
     approveTokens = (approveTokenCount) => livepeerTokenApprove(this.props.app, approveTokenCount)
@@ -43,12 +44,12 @@ export default class App extends React.Component {
                     <BalanceApprovalContainer>
                         <LivepeerBalance observable={this.props.observable}/>
                         <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
+
+
+                        <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}
+                                    handleApproveAndBond={this.approveAndBond}/>
+
                     </BalanceApprovalContainer>
-
-                    <hr/>
-                    <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}
-                                handleApproveAndBond={this.approveAndBond}/>
-
                     <hr/>
                     <UnbondTokens observable={this.props.observable} handleUnbondTokens={this.unbondTokens}
                                   handleWithdrawTokens={this.withdrawTokens}/>

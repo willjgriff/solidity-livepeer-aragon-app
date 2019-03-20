@@ -3,15 +3,17 @@ import {Text, observe, Card} from "@aragon/ui"
 import styled from 'styled-components'
 import {fromDecimals} from "../lib/math-utils";
 
+const BalanceContainer = styled.div`
+    margin-right: 30px;
+`
+
 const BalancesCard = styled(Card)`
     padding: 10px;
     display: flex;
     flex-direction: row;
     height: auto;
-`
-
-const BalanceContainer = styled.div`
-    margin-right: 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 `
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
