@@ -1,19 +1,50 @@
 import React, {useState} from "react"
-import {Button, observe, TextInput, Text} from "@aragon/ui"
+import {Button, observe, TextInput, Text, Field, Card, Info} from "@aragon/ui"
+import styled from 'styled-components'
 import {fromDecimals} from '../lib/math-utils'
+
+const ApproveTokensContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+`
+const ApprovedTokensCard = styled(Card)`
+    padding: 10px;
+    height: auto;
+`
+const ApproveAndButton = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+`
+const ApproveInput = styled(Field)`
+    margin-right: 20px;
+`
 
 const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
 
     const [approveTokenCount, setApproveTokenCount] = useState(0)
 
     return (
-        <div>
-            <TextInput type="number" placeholder="Approve Tokens"
-                       onChange={event => setApproveTokenCount(event.target.value)}/>
-            <Button onClick={() => handleApproveTokens(approveTokenCount)}>Approve tokens for transfer</Button>
-            <Text.Block size="normal">Tokens approved for Bonding Manager to spend on behalf of Livepeer
-                App: {appApprovedTokens}</Text.Block>
-        </div>
+        <ApproveTokensContainer>
+            <Text.Block size="normal" weight="bold">Bonding Manager Approved Tokens</Text.Block>
+
+
+                <ApprovedTokensCard>
+                    <Text.Block size="normal">{appApprovedTokens}</Text.Block>
+                </ApprovedTokensCard>
+
+
+            <ApproveAndButton>
+
+                <ApproveInput label="Approve Tokens:">
+                    <TextInput type="number"
+                               onChange={event => setApproveTokenCount(event.target.value)}/>
+                </ApproveInput>
+                <Button mode="outline" onClick={() => handleApproveTokens(approveTokenCount)}>Approve Tokens</Button>
+
+            </ApproveAndButton>
+        </ApproveTokensContainer>
     )
 }
 

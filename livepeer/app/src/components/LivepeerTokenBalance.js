@@ -1,13 +1,28 @@
 import React from "react"
-import {Text, observe} from "@aragon/ui"
+import {Text, observe, Card} from "@aragon/ui"
+import styled from 'styled-components'
 import {fromDecimals} from "../lib/math-utils";
+
+const BalancesCard = styled(Card)`
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    height: auto;
+`
+
+const BalanceContainer = styled.div`
+    margin-right: 30px;
+`
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
     return (
-        <div>
-            <Text.Block size="normal">User LPT balance: {userLptBalance}</Text.Block>
-            <Text.Block size="normal">Apps LPT balance: {appsLptBalance}</Text.Block>
-        </div>
+        <BalanceContainer>
+            <Text.Block weight="bold" size="normal">Livepeer Token (LPT) balance</Text.Block>
+            <BalancesCard>
+                <Text.Block size="normal">User (you): {userLptBalance}</Text.Block>
+                <Text.Block size="normal">Livepeer App: {appsLptBalance}</Text.Block>
+            </BalancesCard>
+        </BalanceContainer>
     )
 }
 
