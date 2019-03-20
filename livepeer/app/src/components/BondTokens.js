@@ -41,7 +41,7 @@ const BondToAddressField = styled(Field)`
     width: 100%;
 `
 
-const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
+const BondTokens = ({handleBondTokens, handleApproveAndBond, bondedAmount, delegateAddress}) => {
 
     const [bondTokenCount, setBondTokenCount] = useState(0)
     const [bondToAddress, setBondToAddress] = useState(0)
@@ -52,7 +52,7 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
             <Text.Block size="normal" weight="bold">Bonded Tokens</Text.Block>
 
             <BondedTokensCard>
-                <Text.Block>{tokensBonded} LPT bonded to 0x9cdd952fd5d4623de3549ecf6e06a650ec3eda0a</Text.Block>
+                <Text.Block>{bondedAmount} LPT bonded to {delegateAddress}</Text.Block>
             </BondedTokensCard>
 
             <BondInputFields>
@@ -82,9 +82,10 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, tokensBonded}) => {
 const BondTokensObserve = observe(state$ => state$.map(state => {
     return state === null ? state : {
         ...state,
-        tokensBonded: fromDecimals(state.tokensBonded.toString(), 18, false)
+        bondedAmount: fromDecimals(state.delegatorInfo.bondedAmount.toString(), 18),
+        delegateAddress: state.delegatorInfo.delegateAddress
     }
-}), {tokensBonded: 0})
+}), {delegatorInfo: {}})
 (BondTokens)
 
 export default BondTokensObserve

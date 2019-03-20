@@ -14,7 +14,7 @@ let defaultState = {
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
-    tokensBonded: 0,
+    delegatorInfo: {bondedAmount: 0, delegateAddress: ""},
     currentRound: 0,
     unbondingLockInfos: []
 }
@@ -27,7 +27,7 @@ const initialState = async (state) => {
         userLptBalance: await userLptBalance$().toPromise(),
         appsLptBalance: await appLptBalance$().toPromise(),
         appApprovedTokens: await appApprovedTokens$().toPromise(),
-        tokensBonded: await tokensBonded$().toPromise(),
+        delegatorInfo: await delegatorInfo$().toPromise(),
         currentRound: await currentRound$().toPromise(),
         unbondingLockInfos: await unbondingLockInfos$().toPromise()
     }
@@ -59,7 +59,7 @@ const onNewEvent = async (state, {event}) => {
             console.log("BOND")
             return {
                 ...state,
-                tokensBonded: await tokensBonded$().toPromise(),
+                delegatorInfo: await delegatorInfo$().toPromise(),
                 appApprovedTokens: await appApprovedTokens$().toPromise(),
                 appsLptBalance: await appLptBalance$().toPromise()
             }
@@ -67,7 +67,7 @@ const onNewEvent = async (state, {event}) => {
             console.log("UNBOND")
             return {
                 ...state,
-                tokensBonded: await tokensBonded$().toPromise(),
+                delegatorInfo: await delegatorInfo$().toPromise(),
                 unbondingLockInfos: await unbondingLockInfos$().toPromise()
             }
         case 'NewRound':
@@ -115,10 +115,10 @@ const appApprovedTokens$ = () =>
         .zip(bondingManagerAddress$(app))
         .mergeMap(([token, bondingManagerAddress]) => token.allowance(LIVEPEER_APP_PROXY_ADDRESS, bondingManagerAddress))
 
-const tokensBonded$ = () =>
+const delegatorInfo$ = () =>
     bondingManager$(app)
         .mergeMap(bondingManager => bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS))
-        .map(delegator => delegator.bondedAmount)
+        .map(delegator => {return {bondedAmount: delegator.bondedAmount, delegateAddress: delegator.delegateAddress}})
 
 const currentRound$ = () =>
     roundsManager$(app)
