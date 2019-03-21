@@ -6,6 +6,11 @@ import {fromDecimals} from "../lib/math-utils";
 const BondTokensContainer = styled.div`
     display: flex;
     flex-direction: column;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 30px;
 `
 
 const BondInputFields = styled.div`
@@ -49,7 +54,7 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, bondedAmount, deleg
     return (
         <BondTokensContainer>
 
-            <Text.Block size="normal" weight="bold">Bonded Tokens</Text.Block>
+            <Text.Block size="normal" weight="bold">Bond Tokens</Text.Block>
 
             <BondedTokensCard>
                 <Text.Block>{bondedAmount} LPT bonded to {delegateAddress}</Text.Block>

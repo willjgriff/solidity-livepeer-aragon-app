@@ -1,23 +1,50 @@
 import React from "react"
-import {Button} from "@aragon/ui"
+import {Button, Table, TableRow, TableHeader, TableCell} from "@aragon/ui"
+import styled from 'styled-components'
+
+const StyledTableCell = styled(TableCell)`
+    width: 25%;
+`
 
 const UnbondingLockItem = props => {
     return (
-        <li>Unbonding lock ID: {props.unbondingLockInfo.id} LPT value: {props.unbondingLockInfo.amount} Withdraw
-            round: {props.unbondingLockInfo.withdrawRound}&nbsp;&nbsp;&nbsp;
-            <Button onClick={() => props.handleWithdrawTokens(props.unbondingLockInfo.id)}
-                    disabled={props.unbondingLockInfo.disableWithdraw} mode="strong">Withdraw tokens</Button>
-        </li>
+
+        <TableRow>
+
+            <StyledTableCell>
+                {props.unbondingLockInfo.id}
+            </StyledTableCell>
+
+            <StyledTableCell>
+                {props.unbondingLockInfo.amount} LPT
+            </StyledTableCell>
+
+            <StyledTableCell>
+                {props.unbondingLockInfo.withdrawRound}
+            </StyledTableCell>
+
+            <StyledTableCell>
+                <Button onClick={() => props.handleWithdrawTokens(props.unbondingLockInfo.id)}
+                        disabled={props.unbondingLockInfo.disableWithdraw} mode="strong">Withdraw tokens</Button>
+            </StyledTableCell>
+
+        </TableRow>
     )
 }
 
-export default function UnbondingLockItems({unbondingLockInfos, handleWithdrawTokens}) {
+export default function UnbondingLockItems({unbondingLockInfos, handleWithdrawTokens, currentRound}) {
     return (
-        <ul start="0" style={{listStyleType: "none"}}>
+        <Table header={
+            <TableRow>
+                <TableHeader title="Unbonding Lock ID"/>
+                <TableHeader title="Livepeer Token Value"/>
+                <TableHeader title={`Withdraw Round (current: ${currentRound})`}/>
+            </TableRow>
+        }>
             {unbondingLockInfos.map(unbondingLockInfo =>
                 <UnbondingLockItem key={unbondingLockInfo.id} handleWithdrawTokens={handleWithdrawTokens}
                                    unbondingLockInfo={unbondingLockInfo}/>)}
-        </ul>
+        </Table>
     )
 }
 

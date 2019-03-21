@@ -4,9 +4,12 @@ import styled from 'styled-components'
 import {fromDecimals} from '../lib/math-utils'
 
 const ApproveTokensContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-right: 30px
+    margin-right: 30px;   
+    margin-bottom: 30px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 10px; 
 `
 const ApprovedTokensCard = styled(Card)`
     padding: 10px;

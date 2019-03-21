@@ -5,6 +5,11 @@ import {fromDecimals} from "../lib/math-utils";
 
 const BalanceContainer = styled.div`
     margin-right: 30px;
+    margin-bottom: 30px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 10px; 
 `
 
 const BalancesCard = styled(Card)`
@@ -13,7 +18,6 @@ const BalancesCard = styled(Card)`
     flex-direction: row;
     height: auto;
     margin-top: 10px;
-    margin-bottom: 20px;
 `
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {

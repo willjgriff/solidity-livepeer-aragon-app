@@ -8,6 +8,10 @@ import {range} from 'rxjs/observable/range'
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
 
+//TODO: Add check and button for claimEarnings call.
+//TODO: Add rebond functions.
+//TODO: Work out how to get the money out! Perhaps we can set the TransferRole permission using the CLI (can't through the UI).
+
 // Mainly for a complete perspective of the state.
 let defaultState = {
     appAddress: "0xABCD...",
@@ -97,8 +101,6 @@ app.store(onNewEvent,
         roundsManager$(app).mergeMap(roundsManager => roundsManager.events())
     ]
 )
-
-//TODO: Get BondedToAddress
 
 const userLptBalance$ = () =>
     app.accounts()
