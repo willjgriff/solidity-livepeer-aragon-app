@@ -16,9 +16,16 @@ const AppContainer = styled(AppView)`
     flex-direction: column;
 `
 
-const BalanceApprovalContainer = styled.div`
+const BondBalanceApprovalContainer = styled.div`
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+`
+
+const BalanceApprovalContainer = styled.div`
+    display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     align-items: flex-start;
 `
@@ -41,14 +48,19 @@ export default class App extends React.Component {
             <Main>
                 <AppContainer title="Livepeer">
 
-                    <BalanceApprovalContainer>
-                        <LivepeerBalance observable={this.props.observable}/>
+                    <BondBalanceApprovalContainer>
 
-                        <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
+                        <BalanceApprovalContainer>
+                            <LivepeerBalance observable={this.props.observable}/>
+
+                            <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
+
+                        </BalanceApprovalContainer>
 
                         <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}
                                     handleApproveAndBond={this.approveAndBond}/>
-                    </BalanceApprovalContainer>
+
+                    </BondBalanceApprovalContainer>
 
                     <UnbondTokens observable={this.props.observable} handleUnbondTokens={this.unbondTokens}
                                   handleWithdrawTokens={this.withdrawTokens}/>

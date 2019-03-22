@@ -10,14 +10,14 @@ const UnbondTokensContainer = styled.div`
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
+    border-color: rgb(179,179,179);
     padding: 10px;
 `
 
 const UnbondInnerContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
 `
 
 const UnbondInput = styled.div`
@@ -42,9 +42,9 @@ const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, currentRound, u
     return (
         <UnbondTokensContainer>
 
-            <Text.Block weight="bold" size="normal">Unbond Tokens</Text.Block>
-
             <UnbondInnerContainer>
+
+                <Text.Block weight="bold" size="normal">Unbond Tokens</Text.Block>
 
                 <UnbondInput>
                     <UnbondTokenField label="Unbond Tokens:">
@@ -56,11 +56,12 @@ const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, currentRound, u
                         tokens</UnbondTokenButton>
                 </UnbondInput>
 
-                <UnbondingLockItems handleWithdrawTokens={handleWithdrawTokens}
-                                    unbondingLockInfos={unbondingLockInfos}
-                                    currentRound={currentRound}/>
-
             </UnbondInnerContainer>
+
+            <UnbondingLockItems handleWithdrawTokens={handleWithdrawTokens}
+                                unbondingLockInfos={unbondingLockInfos}
+                                currentRound={currentRound}/>
+
         </UnbondTokensContainer>
     )
 }

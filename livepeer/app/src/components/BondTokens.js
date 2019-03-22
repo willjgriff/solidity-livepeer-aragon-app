@@ -9,6 +9,7 @@ const BondTokensContainer = styled.div`
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
+    border-color: rgb(179,179,179);
     padding: 10px;
     margin-bottom: 30px;
 `

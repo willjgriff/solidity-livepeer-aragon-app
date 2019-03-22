@@ -8,8 +8,8 @@
     "@aragon/apps-token-manager": "2.0.0",
     "@aragon/apps-vault": "^4.0.0",
     "@aragon/apps-voting": "2.0.0",
-    "@aragon/client": "^1.1.0",
-    "@aragon/os": "4.0.1",
+    "@aragon/client": "^1.1.1",
+    "@aragon/os": "4.1.0",
     "@aragon/ui": "^0.32.0",
     "@aragon/wrapper": "^4.0.0-beta.1",
     "ethereumjs-abi": "^0.6.6",
@@ -21,7 +21,7 @@
     "web3-eth-abi": "^1.0.0-beta.48"
   },
   "devDependencies": {
-    "@aragon/cli": "^5.4.0",
+    "@aragon/cli": "^5.5.0",
     "@babel/core": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/polyfill": "^7.2.5",

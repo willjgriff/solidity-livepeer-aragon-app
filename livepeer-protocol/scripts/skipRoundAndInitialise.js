@@ -3,13 +3,13 @@ const AdjustableRoundsManager = artifacts.require("AdjustableRoundsManager")
 
 const {contractId} = require("../utils/helpers")
 
-const SKIP_NUMBER_OF_ROUNDS = 1;
+const SKIP_NUMBER_OF_ROUNDS = 6;
 
 module.exports = async () => {
     let controller
     let roundsManager
 
-    console.log("Skipping current round...")
+    console.log(`Skipping ${SKIP_NUMBER_OF_ROUNDS} rounds...`)
 
     controller = await Controller.deployed()
 

@@ -2,8 +2,8 @@ import Fixture from "../../livepeer-protocol/test/unit/helpers/Fixture"
 import ethUtil from "ethereumjs-util"
 import DaoDeployment from "./helpers/DaoDeployment"
 
-const { encodeCallScript } = require('@aragon/test-helpers/evmScript')
-const abi = require('ethereumjs-abi')
+const {encodeCallScript} = require('@aragon/test-helpers/evmScript')
+const bn = require("bn.js")
 
 const BondingManager = artifacts.require("BondingManager")
 const SortedDoublyLL = artifacts.require("SortedDoublyLL")
@@ -105,14 +105,31 @@ contract("BondingManager through Agent", accounts => {
         it("bonds twice in the same transaction", async () => {
             const expectedTotalDelegated = 1000
             const bondAction = { to: bondingManager.address, calldata: bondingManager.contract.methods.bond(expectedTotalDelegated, bondRequester).encodeABI() }
-            const script = encodeCallScript([bondAction])
+            const script = encodeCallScript([bondAction, bondAction])
 
             await agent.forward(script, { from: bondRequester })
 
             const actualTotalDelegated = (await bondingManager.getDelegator(bondRequester)).delegatedAmount
-            assert.equal(actualTotalDelegated, expectedTotalDelegated * 2)
+            assert.equal(actualTotalDelegated.toNumber(), expectedTotalDelegated * 2)
         })
 
+        it("executes successfully when correct permission params are set", async () => {
+            const expectedTotalDelegated = 1000
+            await daoDeployment.acl.revokePermission(ANY_ADDR, agent.address, EXECUTE_ROLE)
+            const bondFunction = bondingManager.contract.methods.bond(expectedTotalDelegated, bondRequester).encodeABI()
+            const bondFunctionSignature = bondFunction.slice(2, 10)
+            const argId = '0x02' // arg 2 in called function, in the case of execute(target, ethValue, data) from Agent.sol this is the data field.
+                               // This is also reduced to the first 4 bytes of the function call (function sig) in Agent.sol
+            const op = '01'    // Represents 'equal to' from the Op enum in ACL.sol
+            const value = `0000000000000000000000000000000000000000000000000000${bondFunctionSignature}` // b78d27dc The Bond functions signature
+            const param = new bn(`${argId}${op}${value}`, 16)
+
+            await daoDeployment.acl.grantPermissionP(bondRequester, agent.address, EXECUTE_ROLE, [param], { from: owner })
+            await agent.execute(bondingManager.address, 0, bondFunction, { from: bondRequester })
+
+            const actualTotalDelegated = (await bondingManager.getDelegator(bondRequester)).delegatedAmount
+            assert.equal(actualTotalDelegated, expectedTotalDelegated)
+        })
 
     })
 
