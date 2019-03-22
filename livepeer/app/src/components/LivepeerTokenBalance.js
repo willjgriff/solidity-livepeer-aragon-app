@@ -19,6 +19,7 @@ const BalancesCard = styled(Card)`
     flex-direction: row;
     height: auto;
     margin-top: 10px;
+    justify-content: space-between;
 `
 
 const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
@@ -26,8 +27,8 @@ const LivepeerBalance = ({userLptBalance, appsLptBalance}) => {
         <BalanceContainer>
             <Text.Block weight="bold" size="normal">Livepeer Token (LPT) balance</Text.Block>
             <BalancesCard>
-                <Text.Block size="normal">User (you): {userLptBalance}</Text.Block>
-                <Text.Block size="normal">Livepeer App: {appsLptBalance}</Text.Block>
+                <Text.Block size="normal">User (you): <br/>{userLptBalance}</Text.Block>
+                <Text.Block size="normal">Livepeer App:<br/> {appsLptBalance}</Text.Block>
             </BalancesCard>
         </BalanceContainer>
     )

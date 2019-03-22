@@ -88,10 +88,10 @@ contract Kit is KitBase {
         acl.createPermission(ANY_ENTITY, voting, voting.CREATE_VOTES_ROLE(), root);
         acl.grantPermission(voting, tokenManager, tokenManager.MINT_ROLE());
 
+        
         // Agent Permissions
-        acl.createPermission(ANY_ENTITY, app, app.EXECUTE_ROLE(), ANY_ENTITY);
-        acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), ANY_ENTITY);
-
+        acl.createPermission(root, app, app.EXECUTE_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), root);
 
 
         // Clean up permissions
