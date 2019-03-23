@@ -11,6 +11,7 @@ const app = new Aragon()
 //TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
 //TODO: Work out how to get the money out! Perhaps we can set the TransferRole permission using the CLI (can't through the UI).
+//TODO: Create child contract with functions for each function call to enable radspec strings, transfer function and init with an event.
 
 // Mainly for a complete perspective of the state.
 let defaultState = {
@@ -37,15 +38,21 @@ const initialState = async (state) => {
     }
 }
 
-const onNewEvent = async (state, {event}) => {
-    // console.log("State Update")
+const onNewEvent = async (state, event) => {
+    console.log(event)
 
     if (state === null) state = defaultState
-    switch (event) {
+    switch (event.event) {
         // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
         case INITIALISE_EMISSION:
             console.log("INITIALISE")
             return await initialState(state)
+        // case 'Execute':
+        //     console.log("EXECUTE")
+        //     return {
+        //         ...state,
+        //         appAddress: event.address
+        //     }
         case 'Transfer':
             console.log("TRANSFER")
             return {

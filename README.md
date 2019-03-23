@@ -3,19 +3,21 @@ Aragon app for managing Livepeer actions.
 
 This project uses the Aragon Agent app (Agent.sol) for storing LPT and interacting with Livepeer contracts. 
 
-Initial development includes functions for Livepeer interaction as a typical bonder/delegator. These include the ability to call the functions: approve (on the Livepeer token), bond, unbond and withdraw.
+Initial development includes functions for Livepeer interaction as a typical bonder/delegator. These include the ability to call the functions: approve, bond, claimEarnings, unbond, rebond and withdraw.
 
-Further development will include functions for declaring the app as a transcoder and modifying transcoder variables (reward, fee etc) and eventually integrating voting rights weighted at least partly on the amount bonded to the transcoder.
+Further development will include functions for declaring the app as a transcoder and modifying transcoder variables (reward, fee etc) and integrating voting rights weighted by the amount and time spent bonded to the transcoder. This will also have to include investigation into how to properly incentivize and securely monitor transcoder node operation. A brief discussion can be found here: https://github.com/livepeer/research/issues/13  
 
 ## Project contents
 ### aragon-livepeer-experiment
-Initial experimental Solidity tests between the Aragon Agent.sol and the Livepeer BondingManager.sol.
+Initial experimental Solidity tests between the Aragon Agent.sol and the Livepeer BondingManager.sol. See the test file if interested.
 
 ### livepeer-protocol
-The full livepeer contract deployment for testing locally. Modified to compile with the latest version of Truffle v5.0.6 by swapping `bignumber.js` for `bn.js`. Added a script `initialiseFirstRound.js` for preparing the BondingManager to be bonded too.  
+The full livepeer contract deployment for testing locally. Modified to compile with the latest version of Truffle v5.0.6 by swapping `bignumber.js` for `bn.js`. Includes 2 extra truffle scripts:  
+`initialiseFirstRound.js` for preparing the BondingManager to be bonded too after initial deployment.  
+`skipRoundAndInitialise.js` for skipping a specified number of Livepeer rounds, required for speeding up the system for testing.  
 
 ### livepeer
-The in development Livepeer Aragon app using the Aragon agent. Uses the Aragon `react-kit` template. Currently includes ability to approve tokens and bond to the BondingManager. 
+The in development Livepeer Aragon app using the Aragon agent. Uses the Aragon `react-kit` template. Currently includes basic functions including approve, bond, unbond and withdraw. 
 
 ## Local Deployment Instructions
 
@@ -36,12 +38,12 @@ Deploy Aragon Dao, execute these in `livepeer` directory (Note these steps will 
 ```npm run start:app``` (Starts a server hosting the web files for the Livepeer Aragon app)  
 ```npm run start:aragon:http:kit``` (Publishes the Livepeer Aragon app and deploys an Aragon DAO to the local Ethereum testnet)
 
-Copy the following addresses to the configuration file found at `livepeer/app/config.js` (Note this step will be reduced or removed in future):  
+Copy the following addresses to the configuration file found at `livepeer/app/config.js` (Note this step will be reduced to setting just the Livepeer Controller address in future):  
 Livepeer Controller Address.    
 Livepeer Aragon app proxy address found with `dao apps daoAddress` (daoAddress can be found after creating the dao with `npm run start:aragon:http:kit`)
 
-Update the dist script, execute this in `livepeer` (this updates the app hosting server with the updated config.js addresses):  
+Update the dist script, execute this in `livepeer` directory (this updates the app hosting server with the updated config.js addresses):  
 ```npm run build:script```
 
-Before unbonding, you must skip the current round and initialise the next. To do this execute this in `livepeer-protocol` directory:
+Before unbonding or withdrawing, you must skip one or more rounds and initialise the latest one. To do this, modify the constants inside as necessary and execute this in `livepeer-protocol` directory:
  ```truffle exec scripts/skipRoundAndInitialise.js```
