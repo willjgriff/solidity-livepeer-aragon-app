@@ -15,7 +15,7 @@ const app = new Aragon()
 
 // Mainly for a complete perspective of the state.
 let defaultState = {
-    appAddress: "0xABCD...",
+    appAddress: "0x0000000000000000000000000000000000000000",
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,

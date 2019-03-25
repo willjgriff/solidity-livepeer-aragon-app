@@ -1,5 +1,5 @@
 import React from 'react'
-import {Main, AppView} from '@aragon/ui'
+import {Main, AppView, observe} from '@aragon/ui'
 import styled from 'styled-components'
 
 import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
@@ -19,13 +19,6 @@ const AppContainer = styled(AppView)`
 const BondBalanceApprovalContainer = styled.div`
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-`
-
-const BalanceApprovalContainer = styled.div`
-    display: flex;
-    flex-direction: column;
     flex-wrap: wrap;
     align-items: flex-start;
 `
@@ -50,12 +43,11 @@ export default class App extends React.Component {
 
                     <BondBalanceApprovalContainer>
 
-                        <BalanceApprovalContainer>
-                            <LivepeerBalance observable={this.props.observable}/>
 
-                            <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
 
-                        </BalanceApprovalContainer>
+                        <LivepeerBalance observable={this.props.observable}/>
+
+                        <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
 
                         <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}
                                     handleApproveAndBond={this.approveAndBond}/>
@@ -70,4 +62,3 @@ export default class App extends React.Component {
         )
     }
 }
-

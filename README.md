@@ -22,28 +22,41 @@ The in development Livepeer Aragon app using the Aragon agent. Uses the Aragon `
 ## Local Deployment Instructions
 
 Install dependencies:  
-```npm install -g truffle```  
-```npm install -g @aragon/cli```  
-```npm install``` (In project directory)
+```
+npm install -g truffle 
+npm install -g @aragon/cli 
+npm install (In /livepeer directory)
+npm install (In /livepeer-protocol directory)
+``` 
 
 Startup local chain and IPFS, in separate terminals run:  
-```aragon devchain```  
-```aragon ipfs```
+```
+aragon devchain
+aragon ipfs
+```
 
-Prepare livepeer contracts, execute these in `livepeer-protocol` directory:  
-```truffle migrate```  
-```truffle exec scripts/initialiseFirstRound.js```
+Prepare livepeer contracts, execute these in `/livepeer-protocol` directory:  
+```
+truffle migrate  
+truffle exec scripts/initialiseFirstRound.js
+```
 
-Deploy Aragon Dao, execute these in `livepeer` directory (Note these steps will change in future once the configuration process has been streamlined):  
-```npm run start:app``` (Starts a server hosting the web files for the Livepeer Aragon app)  
-```npm run start:aragon:http:kit``` (Publishes the Livepeer Aragon app and deploys an Aragon DAO to the local Ethereum testnet)
+Deploy Aragon Dao, execute these in `/livepeer` directory (Note these steps will change in future once the configuration process has been streamlined):  
+```
+npm run start:app (Starts a server hosting the web files for the Livepeer Aragon app)  
+npm run start:aragon:http:kit (Publishes the Livepeer Aragon app and deploys an Aragon DAO to the local Ethereum testnet)
+```
 
-Copy the following addresses to the configuration file found at `livepeer/app/config.js` (Note this step will be reduced to setting just the Livepeer Controller address in future):  
-Livepeer Controller Address.    
-Livepeer Aragon app proxy address found with `dao apps daoAddress` (daoAddress can be found after creating the dao with `npm run start:aragon:http:kit`)
+Copy the following addresses to the configuration file found at `/livepeer/app/config.js` (Note this step will be reduced to setting just the Livepeer Controller address in future):  
+- Livepeer Controller Address.    
+- Livepeer Aragon app proxy address found with `dao apps daoAddress` (daoAddress can be found after creating the dao with `npm run start:aragon:http:kit`)
 
-Update the dist script, execute this in `livepeer` directory (this updates the app hosting server with the updated config.js addresses):  
-```npm run build:script```
+Update the dist script, execute this in `/livepeer` directory (this updates the app hosting server with the updated config.js addresses):  
+```
+npm run build:script
+```
 
-Before unbonding or withdrawing, you must skip one or more rounds and initialise the latest one. To do this, modify the constants inside as necessary and execute this in `livepeer-protocol` directory:
- ```truffle exec scripts/skipRoundAndInitialise.js```
+Before unbonding or withdrawing, you must skip one or more rounds and initialise the latest one. To do this, modify the constants inside as necessary and execute this in the `/livepeer-protocol` directory:
+```
+truffle exec scripts/skipRoundAndInitialise.js
+```
