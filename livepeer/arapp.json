@@ -6,7 +6,7 @@
       "params": [
         "Target Address",
         "Eth Value",
-        "Data Bytes"
+        "Function Sig of Data"
       ]
     },
     {
@@ -35,5 +35,5 @@
       "network": "mainnet"
     }
   },
-  "path": "node_modules/@aragon/apps-agent/contracts/Agent.sol"
+  "path": "contracts/Livepeer.sol"
 }

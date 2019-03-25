@@ -1,5 +1,5 @@
 import React from 'react'
-import {Main, AppView, observe} from '@aragon/ui'
+import {Main, AppView} from '@aragon/ui'
 import styled from 'styled-components'
 
 import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
@@ -42,8 +42,6 @@ export default class App extends React.Component {
                 <AppContainer title="Livepeer">
 
                     <BondBalanceApprovalContainer>
-
-
 
                         <LivepeerBalance observable={this.props.observable}/>
 

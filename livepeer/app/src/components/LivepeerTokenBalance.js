@@ -14,7 +14,7 @@ const BalanceContainer = styled.div`
     border-color: rgb(179,179,179);
     padding: 10px; 
 `
-const AppAddressCard = styled(Card)`
+const AddressCard = styled(Card)`
     padding: 10px;
     height: auto;
     margin-top: 10px;
@@ -26,23 +26,32 @@ const BalancesCard = styled(Card)`
     display: flex;
     flex-direction: row;
     height: auto;
+    width: auto;
     margin-top: 10px;
     justify-content: space-between;
 `
+const UserBalance = styled(Text.Block)`
+    margin-right: 10px;
+`
 
-const LivepeerBalance = ({appAddress, userLptBalance, appsLptBalance}) => {
+const LivepeerBalance = ({appAddress, livepeerTokenAddress, userLptBalance, appsLptBalance}) => {
     return (
         <BalanceContainer>
 
             <Text.Block weight="bold" size="normal">Livepeer App Address</Text.Block>
-            <AppAddressCard>
+            <AddressCard>
                 <Text.Block size="normal">{appAddress}</Text.Block>
-            </AppAddressCard>
+            </AddressCard>
 
-            <Text.Block weight="bold" size="normal">Livepeer Token (LPT) balance</Text.Block>
+            <Text.Block weight="bold" size="normal">Livepeer Token Address</Text.Block>
+            <AddressCard>
+                <Text.Block size="normal">{livepeerTokenAddress}</Text.Block>
+            </AddressCard>
+
+            <Text.Block weight="bold" size="normal">Livepeer Token balance</Text.Block>
             <BalancesCard>
-                <Text.Block size="normal">User (you): <br/>{userLptBalance}</Text.Block>
-                <Text.Block size="normal">Livepeer App:<br/> {appsLptBalance}</Text.Block>
+                <UserBalance size="normal">User (you): <br/>{userLptBalance} LPT</UserBalance>
+                <Text.Block size="normal">Livepeer App:<br/> {appsLptBalance} LPT</Text.Block>
             </BalancesCard>
 
         </BalanceContainer>
@@ -55,6 +64,11 @@ const LivepeerBalanceObserve = observe((state$) => state$.map(state => {
         userLptBalance: fromDecimals(state.userLptBalance.toString(), 18, false),
         appsLptBalance: fromDecimals(state.appsLptBalance.toString(), 18, false)
     }
-}), {appAddress: "0x0000000000000000000000000000000000000000", userLptBalance: 0, appsLptBalance: 0})(LivepeerBalance)
+}), {
+    appAddress: "0x0000000000000000000000000000000000000000",
+    livepeerTokenAddress: "0x0000000000000000000000000000000000000000",
+    userLptBalance: 0,
+    appsLptBalance: 0
+})(LivepeerBalance)
 
 export default LivepeerBalanceObserve

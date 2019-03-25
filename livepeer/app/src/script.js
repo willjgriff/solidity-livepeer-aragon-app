@@ -1,12 +1,12 @@
 import '@babel/polyfill'
 import Aragon from '@aragon/client'
-import {livepeerToken$, bondingManager$, roundsManager$, bondingManagerAddress$} from '../web3/ExternalContracts'
-import {LIVEPEER_APP_PROXY_ADDRESS} from "../config";
+import {livepeerTokenAddress$, livepeerToken$, bondingManager$, roundsManager$, bondingManagerAddress$} from '../web3/ExternalContracts'
 import {of} from 'rxjs/observable/of'
 import {range} from 'rxjs/observable/range'
 
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
 const app = new Aragon()
+let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
@@ -15,7 +15,8 @@ const app = new Aragon()
 
 // Mainly for a complete perspective of the state.
 let defaultState = {
-    appAddress: "0x0000000000000000000000000000000000000000",
+    appAddress: livepeerAppAddress,
+    livepeerTokenAddress: "0x0000000000000000000000000000000000000000",
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
@@ -27,8 +28,7 @@ let defaultState = {
 const initialState = async (state) => {
     return {
         ...state,
-        // TODO: Get from an initial event somehow.
-        appAddress: LIVEPEER_APP_PROXY_ADDRESS,
+        livepeerTokenAddress: await livepeerTokenAddress$(app).toPromise(),
         userLptBalance: await userLptBalance$().toPromise(),
         appsLptBalance: await appLptBalance$().toPromise(),
         appApprovedTokens: await appApprovedTokens$().toPromise(),
@@ -44,15 +44,18 @@ const onNewEvent = async (state, event) => {
     if (state === null) state = defaultState
     switch (event.event) {
         // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
+        //  then sort out storing of the app address for the script.
         case INITIALISE_EMISSION:
             console.log("INITIALISE")
             return await initialState(state)
-        // case 'Execute':
-        //     console.log("EXECUTE")
-        //     return {
-        //         ...state,
-        //         appAddress: event.address
-        //     }
+        case 'Execute':
+        case 'AppInitialized':
+            console.log("APP INITIALIZED")
+            livepeerAppAddress = event.address
+            return {
+                ...state,
+                appAddress: livepeerAppAddress
+            }
         case 'Transfer':
             console.log("TRANSFER")
             return {
@@ -117,16 +120,16 @@ const userLptBalance$ = () =>
 
 const appLptBalance$ = () =>
     livepeerToken$(app)
-        .mergeMap(token => token.balanceOf(LIVEPEER_APP_PROXY_ADDRESS))
+        .mergeMap(token => token.balanceOf(livepeerAppAddress))
 
 const appApprovedTokens$ = () =>
     livepeerToken$(app)
         .zip(bondingManagerAddress$(app))
-        .mergeMap(([token, bondingManagerAddress]) => token.allowance(LIVEPEER_APP_PROXY_ADDRESS, bondingManagerAddress))
+        .mergeMap(([token, bondingManagerAddress]) => token.allowance(livepeerAppAddress, bondingManagerAddress))
 
 const delegatorInfo$ = () =>
     bondingManager$(app)
-        .mergeMap(bondingManager => bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS))
+        .mergeMap(bondingManager => bondingManager.getDelegator(livepeerAppAddress))
         .map(delegator => {return {bondedAmount: delegator.bondedAmount, delegateAddress: delegator.delegateAddress}})
 
 const currentRound$ = () =>
@@ -140,10 +143,10 @@ const unbondingLockInfos$ = () =>
         .toArray()
 
 const mapBondingManagerToLockInfo = bondingManager =>
-    bondingManager.getDelegator(LIVEPEER_APP_PROXY_ADDRESS)
+    bondingManager.getDelegator(livepeerAppAddress)
         .zip(currentRound$())
         .mergeMap(([delegator, currentRound]) => range(0, delegator.nextUnbondingLockId)
-            .mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(LIVEPEER_APP_PROXY_ADDRESS, unbondingLockId)
+            .mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(livepeerAppAddress, unbondingLockId)
                 .map(unbondingLockInfo => {return {...unbondingLockInfo, id: unbondingLockId}}))
             .map(unbondingLockInfo => {return {...unbondingLockInfo, disableWithdraw: parseInt(currentRound) < parseInt(unbondingLockInfo.withdrawRound)}}))
 
