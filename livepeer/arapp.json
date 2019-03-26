@@ -1,7 +1,7 @@
 {
   "roles": [
     {
-      "name": "Execute a script",
+      "name": "Execute a function",
       "id": "EXECUTE_ROLE",
       "params": [
         "Target Address",
@@ -10,7 +10,7 @@
       ]
     },
     {
-      "name": "Designate a signer",
+      "name": "Execute a script",
       "id": "RUN_SCRIPT_ROLE",
       "params": [
         "EVM Script"

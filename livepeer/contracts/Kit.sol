@@ -91,7 +91,7 @@ contract Kit is KitBase {
 
 
         // Agent Permissions
-        acl.createPermission(ANY_ENTITY, app, app.EXECUTE_ROLE(), root);
+        acl.createPermission(voting, app, app.EXECUTE_ROLE(), root);
         acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), root);
 
 

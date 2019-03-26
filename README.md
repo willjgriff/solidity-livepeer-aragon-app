@@ -41,17 +41,15 @@ truffle migrate
 truffle exec scripts/initialiseFirstRound.js
 ```
 
-Deploy Aragon Dao, execute these in `/livepeer` directory (Note these steps will change in future once the configuration process has been streamlined):  
+Copy the Livepeer Controller address, found during the Livepeer deployment with `truffle migrate` in the `/livepeer-protocol` directory, to the configuration file found at `/livepeer/app/config.js`
+  
+Deploy Aragon Dao, execute these in the `/livepeer` directory:  
 ```
 npm run start:app (Starts a server hosting the web files for the Livepeer Aragon app)  
 npm run start:aragon:http:kit (Publishes the Livepeer Aragon app and deploys an Aragon DAO to the local Ethereum testnet)
 ```
 
-Copy the following addresses to the configuration file found at `/livepeer/app/config.js` (Note this step will be reduced to setting just the Livepeer Controller address in future):  
-- Livepeer Controller Address.    
-- Livepeer Aragon app proxy address found with `dao apps daoAddress` (daoAddress can be found after creating the dao with `npm run start:aragon:http:kit`)
-
-Update the dist script, execute this in `/livepeer` directory (this updates the app hosting server with the updated config.js addresses):  
+If the script file is updated it must be rebuilt using this in the `/livepeer` directory:  
 ```
 npm run build:script
 ```

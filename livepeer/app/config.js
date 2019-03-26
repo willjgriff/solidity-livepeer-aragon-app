@@ -1,6 +1,6 @@
 
-const CONTROLLER_ADDRESS = "0xA88a2f26d1264F80aA736Af11254802248e0Bc58"
+const CONTROLLER_ADDRESS = "0x609D79AD1935BB9aEce827B8eC111e87122928a7"
 
 export {CONTROLLER_ADDRESS}
 
-// Manually send amount to app (useful for copy/paste): 100000000000000000000000
+// Manually send amount to app (useful for copy/paste): 10000000000000000000000

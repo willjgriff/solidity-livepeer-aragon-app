@@ -39,7 +39,8 @@ const initialState = async (state) => {
 }
 
 const onNewEvent = async (state, event) => {
-    console.log(event)
+
+    // console.log("Event: " + event)
 
     if (state === null) state = defaultState
     switch (event.event) {
