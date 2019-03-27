@@ -35,5 +35,5 @@
       "network": "mainnet"
     }
   },
-  "path": "contracts/Livepeer.sol"
+  "path": "contracts/LivepeerHack.sol"
 }
