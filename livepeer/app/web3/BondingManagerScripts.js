@@ -4,6 +4,7 @@ import BondingManagerUnbondAbi from "../abi/bondingManager-unbond"
 import BondingManagerWithdrawStake from "../abi/bondingManager-withdrawStake"
 import {toDecimals} from "../src/lib/math-utils";
 import {bondingManagerAddress$} from "./ExternalContracts";
+import {mergeMap} from "rxjs/operators";
 
 const bondingManagerBond = (app, numberOfTokens, bondToAddress) => {
     const abiCoder = new AbiCoder()
@@ -11,8 +12,8 @@ const bondingManagerBond = (app, numberOfTokens, bondToAddress) => {
     const convertedTokenCount = toDecimals(numberOfTokens, 18, false)
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerBondAbi, [convertedTokenCount, bondToAddress])
 
-    bondingManagerAddress$(app)
-        .mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall))
+    bondingManagerAddress$(app).pipe(
+        mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall)))
         .subscribe()
 }
 
@@ -22,8 +23,8 @@ const bondingManagerUnbond = (app, numberOfTokens) => {
     const convertedTokenCount = toDecimals(numberOfTokens, 18, false)
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerUnbondAbi, [convertedTokenCount])
 
-    bondingManagerAddress$(app)
-        .mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall))
+    bondingManagerAddress$(app).pipe(
+        mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall)))
         .subscribe()
 }
 
@@ -32,8 +33,8 @@ const bondingManagerWithdraw = (app, unbondingLockId) => {
 
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerWithdrawStake, [unbondingLockId])
 
-    bondingManagerAddress$(app)
-        .mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall))
+    bondingManagerAddress$(app).pipe(
+        mergeMap(bondingManagerAddress => app.execute(bondingManagerAddress, 0, encodedFunctionCall)))
         .subscribe()
 }
 

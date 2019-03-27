@@ -47,7 +47,9 @@ const BondToAddressField = styled(Field)`
     width: 100%;
 `
 
-const BondTokens = ({handleBondTokens, handleApproveAndBond, bondedAmount, delegateAddress}) => {
+const BondTokens = ({handleBondTokens, handleApproveAndBond, appState}) => {
+
+    const {bondedAmount, delegateAddress} = appState.delegatorInfo
 
     const [bondTokenCount, setBondTokenCount] = useState(0)
     const [bondToAddress, setBondToAddress] = useState(0)
@@ -63,19 +65,17 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, bondedAmount, deleg
 
             <BondInputFields>
                 <BondTokensField label="Bond Tokens:">
-                    <TextInput type="number"
-                               onChange={event => setBondTokenCount(event.target.value)}/>
+                    <TextInput type="number" onChange={event => setBondTokenCount(event.target.value)}/>
                 </BondTokensField>
 
                 <BondToAddressField label="Bond to Address:">
-                    <TextInput wide="true" type="text"
-                               onChange={event => setBondToAddress(event.target.value)}/>
+                    <TextInput wide="true" type="text" onChange={event => setBondToAddress(event.target.value)}/>
                 </BondToAddressField>
             </BondInputFields>
 
             <BondButtons>
-                <BondAndApproveButton mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve and
-                    bond to address</BondAndApproveButton>
+                <BondAndApproveButton mode="strong" onClick={() => handleApproveAndBond(bondTokenCount, bondToAddress)}>Approve
+                    and bond to address</BondAndApproveButton>
 
                 <Button mode="outline" onClick={() => handleBondTokens(bondTokenCount, bondToAddress)}>Bond to
                     address</Button>
@@ -85,13 +85,4 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, bondedAmount, deleg
     )
 }
 
-const BondTokensObserve = observe(state$ => state$.map(state => {
-    return state === null ? state : {
-        ...state,
-        bondedAmount: fromDecimals(state.delegatorInfo.bondedAmount.toString(), 18),
-        delegateAddress: state.delegatorInfo.delegateAddress
-    }
-}), {delegatorInfo: {}})
-(BondTokens)
-
-export default BondTokensObserve
+export default BondTokens

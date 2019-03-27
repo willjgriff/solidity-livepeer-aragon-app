@@ -35,7 +35,9 @@ const UnbondTokenButton = styled(Button)`
     margin-right: 20px;
 `
 
-const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, currentRound, unbondingLockInfos}) => {
+const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, appState}) => {
+
+    const {currentRound, unbondingLockInfos} = appState
 
     const [unbondTokenCount, setUnbondTokenCount] = useState(0)
 
@@ -66,22 +68,4 @@ const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, currentRound, u
     )
 }
 
-const UnbondTokensObserve = observe(state$ => state$.map(state => {
-
-    const adjustedUnbondingLockInfo = unbondingLockInfo => {
-        return {
-            ...unbondingLockInfo,
-            amount: fromDecimals(unbondingLockInfo.amount, 18)
-        }
-    }
-
-    return state === null ? state : {
-        ...state,
-        unbondingLockInfos: state.unbondingLockInfos.map(adjustedUnbondingLockInfo)
-    }
-}), {
-    currentRound: 0,
-    unbondingLockInfos: []
-})(UnbondTokens)
-
-export default UnbondTokensObserve
+export default UnbondTokens

@@ -1,6 +1,7 @@
 import React from 'react'
 import {Main, AppView} from '@aragon/ui'
 import styled from 'styled-components'
+import {useAragonApi} from '@aragon/api-react'
 
 import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
 import {bondingManagerBond, bondingManagerUnbond, bondingManagerWithdraw} from "../web3/BondingManagerScripts"
@@ -24,39 +25,41 @@ const BondBalanceApprovalContainer = styled.div`
 `
 
 // TODO: Add defaultProps and propTypes to components. Extract strings. Extract common spacing (px values).
-export default class App extends React.Component {
+function App(props) {
 
-    approveTokens = (approveTokenCount) => livepeerTokenApprove(this.props.app, approveTokenCount)
+    const {api, appState} = useAragonApi()
 
-    bondTokens = (tokenCount, bondToAddress) => bondingManagerBond(this.props.app, tokenCount, bondToAddress)
+    const approveTokens = (approveTokenCount) => livepeerTokenApprove(api, approveTokenCount)
 
-    approveAndBond = (tokenCount, bondToAddress) => approveAndBond(this.props.app, tokenCount, bondToAddress)
+    const bondTokens = (tokenCount, bondToAddress) => bondingManagerBond(api, tokenCount, bondToAddress)
 
-    unbondTokens = (tokenCount) => bondingManagerUnbond(this.props.app, tokenCount)
+    const approveAndBondTokens = (tokenCount, bondToAddress) => approveAndBond(api, tokenCount, bondToAddress)
 
-    withdrawTokens = (unbondingLockId) => bondingManagerWithdraw(this.props.app, unbondingLockId)
+    const unbondTokens = (tokenCount) => bondingManagerUnbond(api, tokenCount)
 
-    render() {
-        return (
-            <Main>
-                <AppContainer title="Livepeer">
+    const withdrawTokens = (unbondingLockId) => bondingManagerWithdraw(api, unbondingLockId)
 
-                    <BondBalanceApprovalContainer>
+    return (
+        <Main>
+            <AppContainer title="Livepeer">
 
-                        <LivepeerBalance observable={this.props.observable}/>
+                <BondBalanceApprovalContainer>
 
-                        <ApproveTokens observable={this.props.observable} handleApproveTokens={this.approveTokens}/>
+                    <LivepeerBalance appState={appState}/>
 
-                        <BondTokens observable={this.props.observable} handleBondTokens={this.bondTokens}
-                                    handleApproveAndBond={this.approveAndBond}/>
+                    <ApproveTokens appState={appState} handleApproveTokens={approveTokens}/>
 
-                    </BondBalanceApprovalContainer>
+                    <BondTokens appState={appState} handleBondTokens={bondTokens}
+                                handleApproveAndBond={approveAndBondTokens}/>
 
-                    <UnbondTokens observable={this.props.observable} handleUnbondTokens={this.unbondTokens}
-                                  handleWithdrawTokens={this.withdrawTokens}/>
+                </BondBalanceApprovalContainer>
 
-                </AppContainer>
-            </Main>
-        )
-    }
+                <UnbondTokens appState={appState} handleUnbondTokens={unbondTokens}
+                              handleWithdrawTokens={withdrawTokens}/>
+
+            </AppContainer>
+        </Main>
+    )
 }
+
+export default App

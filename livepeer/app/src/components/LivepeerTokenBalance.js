@@ -1,7 +1,6 @@
 import React from "react"
-import {Text, observe, Card} from "@aragon/ui"
+import {Text, Card} from "@aragon/ui"
 import styled from 'styled-components'
-import {fromDecimals} from "../lib/math-utils";
 
 const BalanceContainer = styled.div`
     display: flex;
@@ -34,7 +33,9 @@ const UserBalance = styled(Text.Block)`
     margin-right: 10px;
 `
 
-const LivepeerBalance = ({appAddress, livepeerTokenAddress, userLptBalance, appsLptBalance}) => {
+const LivepeerBalance = ({appState}) => {
+    const {appAddress, livepeerTokenAddress, userLptBalance, appsLptBalance} = appState
+
     return (
         <BalanceContainer>
 
@@ -58,17 +59,4 @@ const LivepeerBalance = ({appAddress, livepeerTokenAddress, userLptBalance, apps
     )
 }
 
-const LivepeerBalanceObserve = observe((state$) => state$.map(state => {
-    return state === null ? state : {
-        ...state,
-        userLptBalance: fromDecimals(state.userLptBalance.toString(), 18, false),
-        appsLptBalance: fromDecimals(state.appsLptBalance.toString(), 18, false)
-    }
-}), {
-    appAddress: "0x0000000000000000000000000000000000000000",
-    livepeerTokenAddress: "0x0000000000000000000000000000000000000000",
-    userLptBalance: 0,
-    appsLptBalance: 0
-})(LivepeerBalance)
-
-export default LivepeerBalanceObserve
+export default LivepeerBalance

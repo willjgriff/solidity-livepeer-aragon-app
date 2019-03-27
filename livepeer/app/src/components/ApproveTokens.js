@@ -27,7 +27,9 @@ const ApproveInput = styled(Field)`
     margin-right: 20px;
 `
 
-const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
+const ApproveTokens = ({handleApproveTokens, appState}) => {
+
+    const {appApprovedTokens} = appState
 
     const [approveTokenCount, setApproveTokenCount] = useState(0)
 
@@ -53,11 +55,4 @@ const ApproveTokens = ({handleApproveTokens, appApprovedTokens}) => {
     )
 }
 
-const ApproveTokensObserve = observe(state$ => state$.map(state => {
-    return state === null ? state : {
-        ...state,
-        appApprovedTokens: fromDecimals(state.appApprovedTokens.toString(), 18, false)
-    }
-}), {appApprovedTokens: 0})(ApproveTokens)
-
-export default ApproveTokensObserve
+export default ApproveTokens
