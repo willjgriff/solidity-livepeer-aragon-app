@@ -15,6 +15,15 @@
       "params": [
         "EVM Script"
       ]
+    },
+    {
+      "name": "Transfer tokens",
+      "id": "TRANSFER_ROLE",
+      "params": [
+        "Token",
+        "Send To",
+        "Value"
+      ]
     }
   ],
   "environments": {

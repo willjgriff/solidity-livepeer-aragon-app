@@ -1,7 +1,6 @@
 import React, {useState} from "react"
-import {Button, observe, TextInput, Text, Field, Card, Info} from "@aragon/ui"
+import {Button, TextInput, Text, Field, Card, Info} from "@aragon/ui"
 import styled from 'styled-components'
-import {fromDecimals} from '../lib/math-utils'
 
 const ApproveTokensContainer = styled.div`
     margin-right: 30px;   

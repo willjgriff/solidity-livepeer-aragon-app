@@ -1,6 +1,6 @@
 import '@babel/polyfill'
 import AragonApi from '@aragon/api'
-import {livepeerTokenAddress$, livepeerToken$, bondingManagerAddress$, bondingManager$, roundsManager$} from '../web3/ExternalContractsNEW'
+import {livepeerTokenAddress$, livepeerToken$, bondingManagerAddress$, bondingManager$, roundsManager$} from '../web3/ExternalContracts'
 import {of, range, zip} from "rxjs";
 import {first, mergeMap, map, filter, toArray} from "rxjs/operators"
 

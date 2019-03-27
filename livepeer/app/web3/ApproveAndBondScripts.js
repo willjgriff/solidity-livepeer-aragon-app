@@ -6,13 +6,13 @@ import {encodeCallScript} from "./utils/evmScript"
 import {bondingManagerAddress$, livepeerTokenAddress$} from "./ExternalContracts";
 import {map, mergeMap, zip} from "rxjs/operators";
 
-const approveAndBond = (app, tokenCount, bondToAddress) => {
+const approveAndBond = (api, tokenCount, bondToAddress) => {
     const abiCoder = new AbiCoder()
 
     const convertedTokenCount = toDecimals(tokenCount, 18, false)
 
-    livepeerTokenAddress$(app).pipe(
-        zip(bondingManagerAddress$(app)),
+    livepeerTokenAddress$(api).pipe(
+        zip(bondingManagerAddress$(api)),
         map(([livepeerTokenAddress, bondingManagerAddress]) => {
             const approveEncodedFunctionCall = abiCoder.encodeFunctionCall(LivepeerTokenApprove, [bondingManagerAddress, convertedTokenCount])
             const bondEncodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerBondAbi, [convertedTokenCount, bondToAddress])
@@ -22,7 +22,7 @@ const approveAndBond = (app, tokenCount, bondToAddress) => {
 
             return encodeCallScript([approveAction, bondAction])
         }),
-        mergeMap(encodedCallScript => app.forward(encodedCallScript)))
+        mergeMap(encodedCallScript => api.forward(encodedCallScript)))
         .subscribe()
 }
 

@@ -11,6 +11,7 @@ import LivepeerBalance from "./components/LivepeerTokenBalance"
 import ApproveTokens from "./components/ApproveTokens"
 import BondTokens from "./components/BondTokens"
 import UnbondTokens from "./components/UnbondTokens"
+import transferAppsTokens from "../web3/TransferAppsTokens";
 
 const AppContainer = styled(AppView)`
     display: flex;
@@ -29,6 +30,8 @@ function App() {
 
     const {api, appState} = useAragonApi()
 
+    const transferTokens = (toAddress, amount) => transferAppsTokens(api, toAddress, amount)
+
     const approveTokens = (approveTokenCount) => livepeerTokenApprove(api, approveTokenCount)
 
     const bondTokens = (tokenCount, bondToAddress) => bondingManagerBond(api, tokenCount, bondToAddress)
@@ -45,7 +48,7 @@ function App() {
 
                 <BondBalanceApprovalContainer>
 
-                    <LivepeerBalance appState={appState}/>
+                    <LivepeerBalance appState={appState} handleTransferTokens={transferTokens}/>
 
                     <ApproveTokens appState={appState} handleApproveTokens={approveTokens}/>
 

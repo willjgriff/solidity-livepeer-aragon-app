@@ -4,33 +4,34 @@ import ControllerAbi from '../abi/controller-abi'
 import RoundsManagerAbi from '../abi/roundsManager-abi'
 import {CONTROLLER_ADDRESS} from "../config"
 import {contractId} from './utils/livepeerHelpers'
+import {map} from 'rxjs/operators'
 
 //TODO: Convert to an object or use memoirzation and return const observables with shareReplay(1), could reduce load time.
-// Perhaps put this off until we get errors in app.store(). Had problems experimenting with accessing 2 observables from this object at the same time.
-const controller = (app) => app.external(CONTROLLER_ADDRESS, ControllerAbi)
+// Perhaps put this off until we get errors in api.store(). Had problems experimenting with accessing 2 observables from this object at the same time.
+const controller = (api) => api.external(CONTROLLER_ADDRESS, ControllerAbi)
 
-const livepeerAddressOf$ = (app, livepeerContractName) => controller(app).getContract(contractId(livepeerContractName))
+const livepeerAddressOf$ = (api, livepeerContractName) => controller(api).getContract(contractId(livepeerContractName))
 
-const livepeerTokenAddress$ = (app) => livepeerAddressOf$(app, "LivepeerToken")
+const livepeerTokenAddress$ = (api) => livepeerAddressOf$(api, "LivepeerToken")
 
-const bondingManagerAddress$ = (app) => livepeerAddressOf$(app, "BondingManager")
+const bondingManagerAddress$ = (api) => livepeerAddressOf$(api, "BondingManager")
 
-const roundsManagerAddress$ = (app) => livepeerAddressOf$(app, "RoundsManager")
+const roundsManagerAddress$ = (api) => livepeerAddressOf$(api, "RoundsManager")
 
-const livepeerToken$ = (app) =>
-    livepeerTokenAddress$(app)
-        // .do(address => console.log("LivepeerToken address: " + address))
-        .map(address => app.external(address, LivepeerTokenAbi))
+const livepeerToken$ = (api) =>
+    livepeerTokenAddress$(api).pipe(
+        // tap(address => console.log("LivepeerToken address: " + address)),
+        map(address => api.external(address, LivepeerTokenAbi)))
 
-const bondingManager$ = (app) =>
-    bondingManagerAddress$(app)
-        // .do(address => console.log("BondingManager address: " + address))
-        .map(address => app.external(address, BondingManagerAbi))
+const bondingManager$ = (api) =>
+    bondingManagerAddress$(api).pipe(
+        // tap(address => console.log("BondingManager address: " + address)),
+        map(address => api.external(address, BondingManagerAbi)))
 
-const roundsManager$ = (app) =>
-    roundsManagerAddress$(app)
-        // .do(address => console.log("RoundsManager address: " + address))
-        .map(address => app.external(address, RoundsManagerAbi))
+const roundsManager$ = (api) =>
+    roundsManagerAddress$(api).pipe(
+        // tap(address => console.log("RoundsManager address: " + address)),
+        map(address => api.external(address, RoundsManagerAbi)))
 
 export {
     livepeerTokenAddress$,
