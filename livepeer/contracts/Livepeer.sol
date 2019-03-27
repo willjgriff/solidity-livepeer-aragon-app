@@ -8,6 +8,8 @@ import "@aragon/apps-agent/contracts/Agent.sol";
  This contract could also be used to generate relevant radspec strings in future, without which
  we would use the template radspec strings on the Agent.sol execute and forward functions. Requires
  further research though.
+
+
  */
 contract Livepeer is Agent {
 
