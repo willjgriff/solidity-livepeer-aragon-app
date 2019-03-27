@@ -13,18 +13,6 @@ let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 //TODO: Work out how to get the money out! Perhaps we can set the TransferRole permission using the CLI (can't through the UI).
 //TODO: Create child contract with functions for each function call to enable radspec strings, transfer function and init with an event.
 
-// Mainly for a complete perspective of the state.
-let defaultState = {
-    appAddress: livepeerAppAddress,
-    livepeerTokenAddress: "0x0000000000000000000000000000000000000000",
-    userLptBalance: 0,
-    appsLptBalance: 0,
-    appApprovedTokens: 0,
-    delegatorInfo: {bondedAmount: 0, delegateAddress: ""},
-    currentRound: 0,
-    unbondingLockInfos: []
-}
-
 const initialState = async (state) => {
     return {
         ...state,
@@ -40,7 +28,6 @@ const initialState = async (state) => {
 
 const onNewEvent = async (state, event) => {
 
-    if (state === null) state = defaultState
     switch (event.event) {
         // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
         //  then sort out storing of the app address for the script. Is currently confusing and potentially unreliable.

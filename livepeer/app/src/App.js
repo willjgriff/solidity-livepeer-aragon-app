@@ -25,7 +25,7 @@ const BondBalanceApprovalContainer = styled.div`
 `
 
 // TODO: Add defaultProps and propTypes to components. Extract strings. Extract common spacing (px values).
-function App(props) {
+function App() {
 
     const {api, appState} = useAragonApi()
 
