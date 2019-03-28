@@ -1,6 +1,12 @@
 import '@babel/polyfill'
 import AragonApi from '@aragon/api'
-import {livepeerTokenAddress$, livepeerToken$, bondingManagerAddress$, bondingManager$, roundsManager$} from '../web3/ExternalContracts'
+import {
+    livepeerTokenAddress$,
+    livepeerToken$,
+    bondingManagerAddress$,
+    bondingManager$,
+    roundsManager$
+} from '../web3/ExternalContracts'
 import {of, range, zip} from "rxjs";
 import {first, mergeMap, map, filter, toArray} from "rxjs/operators"
 
@@ -10,8 +16,8 @@ let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
-//TODO: Work out how to get the money out! Perhaps we can set the TransferRole permission using the CLI (can't through the UI).
-//TODO: Create child contract with functions for each function call to enable radspec strings, transfer function and init with an event.
+//TODO: Create child contract with functions for each function call to enable radspec strings
+//TODO: Include and test live updating of bonded tokens on Reward event.
 
 const initialState = async (state) => {
     return {
@@ -118,7 +124,9 @@ const appApprovedTokens$ = () =>
 const delegatorInfo$ = () =>
     bondingManager$(api).pipe(
         mergeMap(bondingManager => bondingManager.getDelegator(livepeerAppAddress)),
-        map(delegator => {return {bondedAmount: delegator.bondedAmount, delegateAddress: delegator.delegateAddress}}))
+        map(delegator => {
+            return {bondedAmount: delegator.bondedAmount, delegateAddress: delegator.delegateAddress}
+        }))
 
 const currentRound$ = () =>
     roundsManager$(api).pipe(
@@ -134,6 +142,13 @@ const mapBondingManagerToLockInfo = bondingManager =>
     zip(bondingManager.getDelegator(livepeerAppAddress), currentRound$()).pipe(
         mergeMap(([delegator, currentRound]) => range(0, delegator.nextUnbondingLockId).pipe(
             mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(livepeerAppAddress, unbondingLockId).pipe(
-                map(unbondingLockInfo => { return {...unbondingLockInfo, id: unbondingLockId }}))),
-            map(unbondingLockInfo => { return {...unbondingLockInfo, disableWithdraw: parseInt(currentRound) < parseInt(unbondingLockInfo.withdrawRound)}}))))
+                map(unbondingLockInfo => {
+                    return {...unbondingLockInfo, id: unbondingLockId}
+                }))),
+            map(unbondingLockInfo => {
+                return {
+                    ...unbondingLockInfo,
+                    disableWithdraw: parseInt(currentRound) < parseInt(unbondingLockInfo.withdrawRound)
+                }
+            }))))
 

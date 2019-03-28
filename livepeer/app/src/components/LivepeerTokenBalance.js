@@ -13,13 +13,6 @@ const BalanceContainer = styled.div`
     border-color: rgb(179,179,179);
     padding: 10px; 
 `
-const AddressCard = styled(Card)`
-    padding: 10px;
-    height: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: auto;
-`
 const BalancesCard = styled(Card)`
     padding: 10px;
     display: flex;
@@ -52,23 +45,13 @@ const TransferButton = styled(Button)`
 `
 
 const LivepeerBalance = ({handleTransferTokens, appState}) => {
-    const {appAddress, livepeerTokenAddress, userLptBalance, appsLptBalance} = appState
+    const {userLptBalance, appsLptBalance} = appState
 
     const [transferAmount, setTransferAmount] = useState(0)
     const [transferAddress, setTransferAddress] = useState(0)
 
     return (
         <BalanceContainer>
-
-            <Text.Block weight="bold" size="normal">Livepeer App Address</Text.Block>
-            <AddressCard>
-                <Text.Block size="normal">{appAddress}</Text.Block>
-            </AddressCard>
-
-            <Text.Block weight="bold" size="normal">Livepeer Token Address</Text.Block>
-            <AddressCard>
-                <Text.Block size="normal">{livepeerTokenAddress}</Text.Block>
-            </AddressCard>
 
             <Text.Block weight="bold" size="normal">Livepeer Token balance</Text.Block>
             <BalancesCard>
@@ -88,7 +71,7 @@ const LivepeerBalance = ({handleTransferTokens, appState}) => {
                                onChange={event => setTransferAmount(event.target.value)}/>
                 </AmountField>
 
-                <TransferButton mode="strong" onClick={() => handleTransferTokens(transferAddress, transferAmount)}>Transfer</TransferButton>
+                <TransferButton mode="strong" onClick={() => handleTransferTokens(transferAddress, transferAmount)}>Transfer Out</TransferButton>
 
             </Transfer>
 

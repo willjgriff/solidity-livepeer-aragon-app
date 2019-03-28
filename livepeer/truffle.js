@@ -57,7 +57,8 @@ module.exports = {
         },
         rinkeby: {
             network_id: 4,
-            provider: providerForNetwork('rinkeby')
+            provider: providerForNetwork('rinkeby'),
+            skipDryRun: true
         }
     },
     // Configure your compilers

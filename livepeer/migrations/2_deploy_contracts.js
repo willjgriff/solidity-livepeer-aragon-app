@@ -1,5 +1,5 @@
-const LivepeerFlattened = artifacts.require('LivepeerFlattened.sol')
+const LivepeerHack = artifacts.require('LivepeerHack.sol')
 
 module.exports = function (deployer) {
-  // deployer.deploy(LivepeerFlattened)
+  deployer.deploy(LivepeerHack)
 }

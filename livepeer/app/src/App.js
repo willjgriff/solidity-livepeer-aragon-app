@@ -12,6 +12,7 @@ import ApproveTokens from "./components/ApproveTokens"
 import BondTokens from "./components/BondTokens"
 import UnbondTokens from "./components/UnbondTokens"
 import transferAppsTokens from "../web3/TransferAppsTokens";
+import Addresses from "./components/Addresses";
 
 const AppContainer = styled(AppView)`
     display: flex;
@@ -47,6 +48,8 @@ function App() {
             <AppContainer title="Livepeer">
 
                 <BondBalanceApprovalContainer>
+
+                    <Addresses appState={appState}/>
 
                     <LivepeerBalance appState={appState} handleTransferTokens={transferTokens}/>
 
