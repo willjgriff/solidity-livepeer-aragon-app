@@ -16,8 +16,9 @@ let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
-//TODO: Create child contract with functions for each function call to enable radspec strings
+//TODO: Enable radspec strings somehow (maybe child contract functions)
 //TODO: Include and test live updating of bonded tokens on Reward event.
+//TODO: Check for MetaMask address change and refresh user LPT balance.
 
 const initialState = async (state) => {
     return {

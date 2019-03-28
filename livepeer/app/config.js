@@ -6,4 +6,4 @@ const CONTROLLER_ADDRESS = "0x37dC71366Ec655093b9930bc816E16e6b587F968" // Rinke
 
 export {CONTROLLER_ADDRESS}
 
-// Manually send amount to app (useful for copy/paste): 10000000000000000000000
+// Manually send amount to app (useful for copy/paste): 10000000000000000000
