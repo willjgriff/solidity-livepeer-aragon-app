@@ -19,37 +19,32 @@ The full livepeer contract deployment for testing locally. Modified to compile w
 ### livepeer
 The in development Livepeer Aragon app using the Agent app. Uses the Aragon `react-kit` template. Currently includes basic functions including approve, bond, unbond, withdraw and transfer. 
 
-## Aragon DAO Installation Instructions
+## Aragon DAO Rinkeby Installation Instructions
 
 Alpha versions of the Livepeer Aragon app are available on Rinkeby through the aragonPM. 
 Using the aragonCLI with access to Rinkeby through the staging environment you can install the current version of this app into an existing Aragon DAO on Rinkeby.  
 
 1. To install the aragonCLI:
-    ```
+    ```sh
     npm install -g @aragon/cli 
     ```  
 
-2. To get access to a staging environment you can download this project and `cd` into `/livepeer` then set the network endpoint and accounts as specified here: https://hack.aragon.org/docs/guides-faq#set-a-private-key.
+2. To get access to a staging environment you can download this project and `cd` into `/livepeer` then set the network endpoint and accounts as specified here: https://hack.aragon.org/docs/guides-faq#set-a-private-key.  
 
-</br>    
 
 Once setup, to see info about the app, including permission roles, contract functions available and current version:
-```
+```sh
 aragon apm info livepeer.open.aragonpm.eth --environment staging
 ```  
 
-</br>
-
 To install the Livepeer Aragon app into an existing Aragon DAO:  
-```
+```sh
 dao install <DAO Address> livepeer.open.aragonpm.eth --set-permissions open --environment staging
 ```
-Note the success of this call could be dependant on the permissions set in the DAO. Ensure the account connected can action the Manage Apps permission either directly or through a forwarder eg the Voting app. See Permissions -> Kernal in the UI to check. 
+Note the success of this call could be dependant on the permissions set in the DAO. Ensure the account connected can action the Manage Apps permission either directly or through a forwarder eg the Voting app. See Permissions -> Kernal in the UI to check.  
 
-</br>
 
 After app installation the permissions can be modified through the UI or through the CLI. Roles available are parameterised and include:  
-
 - EXECUTE_ROLE
 - RUN_SCRIPT_ROLE
 - TRANSFER_ROLE  
@@ -57,7 +52,7 @@ After app installation the permissions can be modified through the UI or through
 Depending on your set up, they may require parameter permissions to be set to restrict access to certain functions. A preliminary script for modifying parameter permissions can be found at `/livepeer/scripts/grantPermissionWithParameters.js`
 
 
-## Local Deployment Instructions
+## Local Deployment Installation Instructions
 
 1. Install dependencies:  
     ```
@@ -68,13 +63,13 @@ Depending on your set up, they may require parameter permissions to be set to re
     ```
 
 2. Startup local chain and IPFS, in separate terminals run:  
-    ```
+    ```sh
     aragon devchain
     aragon ipfs
     ```
 
 3. Prepare Livepeer contracts, execute in the `/livepeer-protocol` directory:  
-    ```
+    ```sh
     truffle migrate  
     truffle exec scripts/initialiseFirstRound.js
     ```
@@ -82,11 +77,11 @@ Depending on your set up, they may require parameter permissions to be set to re
 4. Copy the Livepeer Controller address, found during the Livepeer deployment after `truffle migrate`, to the configuration file found at `/livepeer/app/config.js`
   
 5. Deploy the Aragon Dao and Livepeer app, execute in the `/livepeer` directory:  
-    ```
+    ```sh
     aragon run
     ```
 
 Finally, before unbonding or withdrawing, you must skip one or more Livepeer rounds and initialise the latest one. To do this, modify the constants as necessary and execute this in the `/livepeer-protocol` directory:  
-```
+```sh
 truffle exec scripts/skipRoundAndInitialise.js
 ```
