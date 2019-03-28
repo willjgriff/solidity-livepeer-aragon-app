@@ -24,32 +24,37 @@ The in development Livepeer Aragon app using the Agent app. Uses the Aragon `rea
 Alpha versions of the Livepeer Aragon app are available on Rinkeby through the aragonPM. 
 Using the aragonCLI with access to Rinkeby through the staging environment you can install the current version of this app into an existing Aragon DAO on Rinkeby.  
 
-To install the aragonCLI:
-```
-npm install -g @aragon/cli 
-```  
+1. To install the aragonCLI:
+    ```
+    npm install -g @aragon/cli 
+    ```  
 
-To get access to a staging environment you can download this project and `cd` into `/livepeer` then set the network endpoint and accounts as specified here: https://hack.aragon.org/docs/guides-faq#set-a-private-key.    
+2. To get access to a staging environment you can download this project and `cd` into `/livepeer` then set the network endpoint and accounts as specified here: https://hack.aragon.org/docs/guides-faq#set-a-private-key.
 
-Once setup, to get info about the app, including permission roles, contract functions available and current version:
+</br>    
+
+Once setup, to see info about the app, including permission roles, contract functions available and current version:
 ```
 aragon apm info livepeer.open.aragonpm.eth --environment staging
-```
+```  
 
-To install the Livepeer Aragon app into an existing Aragon DAO with:
+</br>
+
+To install the Livepeer Aragon app into an existing Aragon DAO:  
 ```
 dao install <DAO Address> livepeer.open.aragonpm.eth --set-permissions open --environment staging
 ```
-Note the sucess of this call could be dependant on the permissions set in the DAO. Ensure the account connected can action the Manage Apps permission either directly or through a forwarder eg the Voting app. See Permissions -> Kernal in the UI to check. 
+Note the success of this call could be dependant on the permissions set in the DAO. Ensure the account connected can action the Manage Apps permission either directly or through a forwarder eg the Voting app. See Permissions -> Kernal in the UI to check. 
 
-After app installation the permissions can be modified through the UI or through the CLI.  
-Roles available include:  
+</br>
+
+After app installation the permissions can be modified through the UI or through the CLI. Roles available are parameterised and include:  
 
 - EXECUTE_ROLE
 - RUN_SCRIPT_ROLE
 - TRANSFER_ROLE  
 
-Depending on the set up, they may require parameter permissions to be set to restrict access to certain functions. A preliminary script for modifying parameter permissions can be found at `/livepeer/scripts/grantPermissionWithParameters.js`
+Depending on your set up, they may require parameter permissions to be set to restrict access to certain functions. A preliminary script for modifying parameter permissions can be found at `/livepeer/scripts/grantPermissionWithParameters.js`
 
 
 ## Local Deployment Instructions
