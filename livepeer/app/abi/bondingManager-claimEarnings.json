@@ -1,0 +1,14 @@
+{
+  "constant": false,
+  "inputs": [
+    {
+      "name": "_endRound",
+      "type": "uint256"
+    }
+  ],
+  "name": "claimEarnings",
+  "outputs": [],
+  "payable": false,
+  "stateMutability": "nonpayable",
+  "type": "function"
+}

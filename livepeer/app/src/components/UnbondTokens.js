@@ -13,33 +13,47 @@ const UnbondTokensContainer = styled.div`
     border-color: rgb(179,179,179);
     padding: 10px;
 `
-
 const UnbondInnerContainer = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 `
-
-const UnbondInput = styled.div`
+const InputContainer = styled.div`
     display: flex;
     flex-direction: row;
     margin-right: 10px;
     align-items: center;
+    flex-wrap: wrap;
 `
-
+const UnbondInput = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`
 const UnbondTokenField = styled(Field)`
     margin-right: 20px;
 `
-
 const UnbondTokenButton = styled(Button)`
     margin-right: 20px;
 `
+const ClaimEarningsInput = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`
+const ClaimEarningsToRoundField = styled(Field)`
+    margin-right: 20px;
+`
+const ClaimEarningsButton = styled(Button)`
+    margin-right: 20px;
+`
 
-const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, appState}) => {
+const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, handleClaimEarnings, appState}) => {
 
     const {currentRound, unbondingLockInfos} = appState
 
     const [unbondTokenCount, setUnbondTokenCount] = useState(0)
+    const [claimEarningsUpToRound, setClaimEarningsUpToRound] = useState(0)
 
     return (
         <UnbondTokensContainer>
@@ -48,15 +62,29 @@ const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, appState}) => {
 
                 <Text.Block weight="bold" size="normal">Unbond Tokens</Text.Block>
 
-                <UnbondInput>
-                    <UnbondTokenField label="Unbond Tokens:">
-                        <TextInput type="number"
-                                   onChange={event => setUnbondTokenCount(event.target.value)}/>
-                    </UnbondTokenField>
+                <InputContainer>
 
-                    <UnbondTokenButton mode="strong" onClick={() => handleUnbondTokens(unbondTokenCount)}>Unbond
-                        tokens</UnbondTokenButton>
-                </UnbondInput>
+                    <UnbondInput>
+                        <UnbondTokenField label="Unbond Tokens:">
+                            <TextInput type="number"
+                                       onChange={event => setUnbondTokenCount(event.target.value)}/>
+                        </UnbondTokenField>
+
+                        <UnbondTokenButton mode="strong" onClick={() => handleUnbondTokens(unbondTokenCount)}>Unbond
+                            tokens</UnbondTokenButton>
+                    </UnbondInput>
+
+                    <ClaimEarningsInput>
+                        <ClaimEarningsToRoundField label="Up To Round:">
+                            <TextInput type="number"
+                                       onChange={event => setClaimEarningsUpToRound(event.target.value)}/>
+                        </ClaimEarningsToRoundField>
+
+                        <ClaimEarningsButton mode="strong" onClick={() => handleClaimEarnings(claimEarningsUpToRound)}>Claim
+                            Earnings</ClaimEarningsButton>
+                    </ClaimEarningsInput>
+
+                </InputContainer>
 
             </UnbondInnerContainer>
 

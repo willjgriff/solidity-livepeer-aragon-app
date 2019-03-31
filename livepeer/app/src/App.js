@@ -3,22 +3,25 @@ import {Main, AppView} from '@aragon/ui'
 import styled from 'styled-components'
 import {useAragonApi} from '@aragon/api-react'
 
-import livepeerTokenApprove from "../web3/LivepeerTokenScripts"
-import {bondingManagerBond, bondingManagerUnbond, bondingManagerWithdraw} from "../web3/BondingManagerScripts"
+import {livepeerTokenApprove, transferAppsTokens} from "../web3/LivepeerTokenScripts"
+import {
+    bondingManagerBond,
+    bondingManagerUnbond,
+    bondingManagerWithdraw,
+    bondingManagerClaimEarnings
+} from "../web3/BondingManagerScripts"
 import approveAndBond from "../web3/ApproveAndBondScripts"
 
 import LivepeerBalance from "./components/LivepeerTokenBalance"
 import ApproveTokens from "./components/ApproveTokens"
 import BondTokens from "./components/BondTokens"
 import UnbondTokens from "./components/UnbondTokens"
-import transferAppsTokens from "../web3/TransferAppsTokens";
 import Addresses from "./components/Addresses";
 
 const AppContainer = styled(AppView)`
     display: flex;
     flex-direction: column;
 `
-
 const BondBalanceApprovalContainer = styled.div`
     display: flex;
     flex-direction: row;
@@ -41,6 +44,8 @@ function App() {
 
     const unbondTokens = (tokenCount) => bondingManagerUnbond(api, tokenCount)
 
+    const claimEarnings = (upToRound) => bondingManagerClaimEarnings(api, upToRound)
+
     const withdrawTokens = (unbondingLockId) => bondingManagerWithdraw(api, unbondingLockId)
 
     return (
@@ -61,6 +66,7 @@ function App() {
                 </BondBalanceApprovalContainer>
 
                 <UnbondTokens appState={appState} handleUnbondTokens={unbondTokens}
+                              handleClaimEarnings={claimEarnings}
                               handleWithdrawTokens={withdrawTokens}/>
 
             </AppContainer>

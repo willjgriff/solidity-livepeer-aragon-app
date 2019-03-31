@@ -30,7 +30,6 @@ const Transfer = styled.div`
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    
 `
 const AddressField = styled(Field)`
     width: auto;

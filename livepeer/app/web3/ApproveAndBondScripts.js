@@ -22,8 +22,8 @@ const approveAndBond = (api, tokenCount, bondToAddress) => {
 
             return encodeCallScript([approveAction, bondAction])
         }),
-        mergeMap(encodedCallScript => api.forward(encodedCallScript)))
-        .subscribe()
+        mergeMap(encodedCallScript => api.forward(encodedCallScript))
+    ).subscribe()
 }
 
 export default approveAndBond

@@ -13,10 +13,20 @@ const livepeerTokenApprove = (api, tokenCount) => {
             return abiCoder.encodeFunctionCall(LivepeerTokenApprove, [bondingManagerAddress, convertedTokenCount])
         }),
         zip(livepeerTokenAddress$(api)),
-        mergeMap(([encodedFunctionCall, tokenAddress]) => api.execute(tokenAddress, 0, encodedFunctionCall)))
-        .subscribe()
+        mergeMap(([encodedFunctionCall, tokenAddress]) => api.execute(tokenAddress, 0, encodedFunctionCall))
+    ).subscribe()
 }
 
-export default livepeerTokenApprove
+const transferAppsTokens = (api, sendToAddress, amount) => {
+
+    const adjustedAmount = toDecimals(amount, 18)
+
+    livepeerTokenAddress$(api).pipe(
+        mergeMap(tokenAddress => api.transfer(tokenAddress, sendToAddress, adjustedAmount))
+    ).subscribe()
+
+}
+
+export {livepeerTokenApprove, transferAppsTokens}
 
 

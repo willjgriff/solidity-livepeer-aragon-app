@@ -11,14 +11,15 @@ import {of, range, zip} from "rxjs";
 import {first, mergeMap, map, filter, toArray} from "rxjs/operators"
 
 const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
+const ACCOUNT_CHANGED_EMISSION = Symbol("ACCOUNT_CHANGED")
+
 const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
 //TODO: Enable radspec strings somehow (maybe child contract functions)
-//TODO: Include and test live updating of bonded tokens on Reward event.
-//TODO: Check for MetaMask address change and refresh user LPT balance.
+//TODO: Rearrange UI, make actions appear in slide in menu.
 
 const initialState = async (state) => {
     return {
@@ -41,6 +42,12 @@ const onNewEvent = async (state, event) => {
         case INITIALISE_EMISSION:
             console.log("INITIALISE")
             return await initialState(state)
+        case ACCOUNT_CHANGED_EMISSION:
+            console.log("ACCOUNT CHANGED")
+            return {
+                ...state,
+                userLptBalance: await userLptBalance$().toPromise()
+            }
         case 'Execute':
         case 'AppInitialized':
             console.log("APP INITIALIZED OR EXECUTE")
@@ -99,9 +106,15 @@ const onNewEvent = async (state, event) => {
     }
 }
 
+const accountChangedEvent$ = () =>
+    api.accounts().pipe(map(account => {
+        return {event: ACCOUNT_CHANGED_EMISSION, account: account}
+    }))
+
 api.store(onNewEvent,
     [
         of({event: INITIALISE_EMISSION}),
+        accountChangedEvent$(),
         livepeerToken$(api).pipe(mergeMap(livepeerToken => livepeerToken.events())),
         bondingManager$(api).pipe(mergeMap(bondingManager => bondingManager.events())),
         roundsManager$(api).pipe(mergeMap(roundsManager => roundsManager.events()))
@@ -126,18 +139,16 @@ const delegatorInfo$ = () =>
     bondingManager$(api).pipe(
         mergeMap(bondingManager => bondingManager.getDelegator(livepeerAppAddress)),
         map(delegator => {
-            return {bondedAmount: delegator.bondedAmount, delegateAddress: delegator.delegateAddress}
+            return {
+                bondedAmount: delegator.bondedAmount,
+                delegateAddress: delegator.delegateAddress,
+                lastClaimRound: delegator.lastClaimRound
+            }
         }))
 
 const currentRound$ = () =>
     roundsManager$(api).pipe(
         mergeMap(roundsManager => roundsManager.currentRound()))
-
-const unbondingLockInfos$ = () =>
-    bondingManager$(api).pipe(
-        mergeMap(mapBondingManagerToLockInfo),
-        filter(unbondingLockInfo => parseInt(unbondingLockInfo.amount) !== 0),
-        toArray())
 
 const mapBondingManagerToLockInfo = bondingManager =>
     zip(bondingManager.getDelegator(livepeerAppAddress), currentRound$()).pipe(
@@ -152,4 +163,13 @@ const mapBondingManagerToLockInfo = bondingManager =>
                     disableWithdraw: parseInt(currentRound) < parseInt(unbondingLockInfo.withdrawRound)
                 }
             }))))
+
+const sortByLockId = (first, second) => first.id > second.id
+
+const unbondingLockInfos$ = () =>
+    bondingManager$(api).pipe(
+        mergeMap(mapBondingManagerToLockInfo),
+        filter(unbondingLockInfo => parseInt(unbondingLockInfo.amount) !== 0),
+        toArray(),
+        map(unbondingLockInfos => unbondingLockInfos.sort(sortByLockId)))
 
