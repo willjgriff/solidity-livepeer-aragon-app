@@ -1,6 +1,11 @@
 {
   "roles": [
     {
+      "name": "Approve for BondingManager",
+      "id": "APPROVE_ROLE",
+      "params": []
+    },
+    {
       "name": "Execute a function",
       "id": "EXECUTE_ROLE",
       "params": [

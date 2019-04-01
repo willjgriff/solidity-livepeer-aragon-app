@@ -19,7 +19,7 @@ let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 //TODO: Add rebond functions.
 //TODO: Enable radspec strings somehow (maybe child contract functions)
 //TODO: Rearrange UI, make actions appear in slide in menu.
-//TODO: More UX and details for ClaimEarnings call.
+//TODO: More UX and details for ClaimEarnings call. Also more disabling of buttons when functions can't be called.
 
 const initialState = async (state) => {
     return {
@@ -79,7 +79,8 @@ const onNewEvent = async (state, event) => {
                 ...state,
                 delegatorInfo: await delegatorInfo$().toPromise(),
                 appApprovedTokens: await appApprovedTokens$().toPromise(),
-                appsLptBalance: await appLptBalance$().toPromise()
+                appsLptBalance: await appLptBalance$().toPromise(),
+                disableUnbondTokens: await disableUnbondTokens$().toPromise()
             }
         case 'Unbond':
             console.log("UNBOND")

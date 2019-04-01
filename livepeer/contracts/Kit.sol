@@ -93,6 +93,7 @@ contract Kit is KitBase {
         acl.createPermission(voting, app, app.EXECUTE_ROLE(), root);
         acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), root);
         acl.createPermission(ANY_ENTITY, app, app.TRANSFER_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.APPROVE_ROLE(), root);
 
 
         // Clean up permissions

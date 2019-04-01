@@ -1,18 +1,24 @@
 pragma solidity ^0.4.24;
 
 import "./Agent.sol";
+import "./IController.sol";
 
 /*
- We use this contract to add an initalized event, necessary to get the app's address in the front-end during init.
+ This fairly hacky contract is a workaround for some limitations with the aragonAPI. Firstly, we
+ cannot access functions on inherited contracts in the aragonAPI so we need to hoist used functions into this child contract.
+ Secondly it enables adding relevant radspec strings to functions that use execute or forward from Agent.sol, which
+ can't be customised that much using aragonAPI, specifically it can't currently include the parameter values.
+ We also use this child contract to add an initalized event, necessary to get the app's address in the front-end during init.
 
- This contract could also be used to generate relevant radspec strings in future, without which
- we would use the template radspec strings on the Agent.sol execute and forward functions. Requires
- further research though.
+ LivepeerHack includes references to a modified Agent contract which includes a reference to a modified Vault contract.
 
- This hacked contract is a workaround for the fact that we cannot access functions on inherited contracts in aragonAPI.
- It includes references to a modified Agent contract which includes a reference to a modified Vault contract.
+ TODO: Pass the livepeerController to the initialize function
+ TODO: Get decimal numbers from LPT contract in Radspec strings
+ TODO: Remove trailing zeros from fractional token amount
  */
 contract LivepeerHack is Agent {
+
+    bytes32 public constant APPROVE_ROLE = keccak256("APPROVE_ROLE");
 
     event AppInitialized();
 
@@ -20,6 +26,27 @@ contract LivepeerHack is Agent {
         initialized();
         setDepositable(true);
         emit AppInitialized();
+    }
+
+    /**
+    * @notice Execute Approve so the BondingManager can spend
+              `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` tokens on behalf of the Livepeer App.
+    * @param _livepeerController The LivepeerController address
+    * @param _value The amount of tokens to approve
+    */
+    function livepeerTokenApprove(address _livepeerController, uint256 _value) external auth(APPROVE_ROLE) {
+
+        IController livepeerController = IController(_livepeerController);
+        bytes32 livepeerTokenId = keccak256("LivepeerToken");
+        address livepeerTokenAddress = livepeerController.getContract(livepeerTokenId);
+
+        bytes32 BondingManagerId = keccak256("BondingManager");
+        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+
+        string memory functionSignature = "approve(address,uint256)";
+        bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, bondingManagerAddress, _value);
+
+        _execute(livepeerTokenAddress, 0, encodedFunctionCall);
     }
 
     /**
