@@ -7,11 +7,11 @@ import {
     bondingManager$,
     roundsManager$
 } from '../web3/ExternalContracts'
-import {of, range, zip} from "rxjs";
-import {first, mergeMap, map, filter, toArray} from "rxjs/operators"
+import {of, range} from "rxjs";
+import {first, mergeMap, map, filter, toArray, zip} from "rxjs/operators"
 
-const INITIALISE_EMISSION = Symbol("INITIALISE_APP")
-const ACCOUNT_CHANGED_EMISSION = Symbol("ACCOUNT_CHANGED")
+const INITIALISE_EVENT = Symbol("INITIALISE_APP")
+const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
 
 const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
@@ -30,6 +30,7 @@ const initialState = async (state) => {
         appApprovedTokens: await appApprovedTokens$().toPromise(),
         delegatorInfo: await delegatorInfo$().toPromise(),
         currentRound: await currentRound$().toPromise(),
+        disableUnbondTokens: await disableUnbondTokens$().toPromise(),
         unbondingLockInfos: await unbondingLockInfos$().toPromise()
     }
 }
@@ -39,10 +40,10 @@ const onNewEvent = async (state, event) => {
     switch (event.event) {
         // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
         //  then sort out storing of the app address for the script. Is currently confusing and potentially unreliable.
-        case INITIALISE_EMISSION:
+        case INITIALISE_EVENT:
             console.log("INITIALISE")
             return await initialState(state)
-        case ACCOUNT_CHANGED_EMISSION:
+        case ACCOUNT_CHANGED_EVENT:
             console.log("ACCOUNT CHANGED")
             return {
                 ...state,
@@ -92,7 +93,8 @@ const onNewEvent = async (state, event) => {
             return {
                 ...state,
                 currentRound: await currentRound$().toPromise(),
-                unbondingLockInfos: await unbondingLockInfos$().toPromise()
+                unbondingLockInfos: await unbondingLockInfos$().toPromise(),
+                disableUnbondTokens: await disableUnbondTokens$().toPromise()
             }
         case 'WithdrawStake':
             console.log("WITHDRAW STAKE")
@@ -108,12 +110,12 @@ const onNewEvent = async (state, event) => {
 
 const accountChangedEvent$ = () =>
     api.accounts().pipe(map(account => {
-        return {event: ACCOUNT_CHANGED_EMISSION, account: account}
+        return {event: ACCOUNT_CHANGED_EVENT, account: account}
     }))
 
 api.store(onNewEvent,
     [
-        of({event: INITIALISE_EMISSION}),
+        of({event: INITIALISE_EVENT}),
         accountChangedEvent$(),
         livepeerToken$(api).pipe(mergeMap(livepeerToken => livepeerToken.events())),
         bondingManager$(api).pipe(mergeMap(bondingManager => bondingManager.events())),
@@ -122,8 +124,9 @@ api.store(onNewEvent,
 )
 
 const userLptBalance$ = () =>
-    zip(api.accounts().pipe(first()),
-        livepeerToken$(api)).pipe(
+    api.accounts().pipe(
+        first(),
+        zip(livepeerToken$(api)),
         mergeMap(([accounts, token]) => token.balanceOf(accounts[0])))
 
 const appLptBalance$ = () =>
@@ -131,9 +134,9 @@ const appLptBalance$ = () =>
         mergeMap(token => token.balanceOf(livepeerAppAddress)))
 
 const appApprovedTokens$ = () =>
-    zip(livepeerToken$(api), bondingManagerAddress$(api)).pipe(
+    livepeerToken$(api).pipe(
+        zip(bondingManagerAddress$(api)),
         mergeMap(([token, bondingManagerAddress]) => token.allowance(livepeerAppAddress, bondingManagerAddress)))
-
 
 const delegatorInfo$ = () =>
     bondingManager$(api).pipe(
@@ -151,7 +154,8 @@ const currentRound$ = () =>
         mergeMap(roundsManager => roundsManager.currentRound()))
 
 const mapBondingManagerToLockInfo = bondingManager =>
-    zip(bondingManager.getDelegator(livepeerAppAddress), currentRound$()).pipe(
+    bondingManager.getDelegator(livepeerAppAddress).pipe(
+        zip(currentRound$()), // Zip here so we only get the current round once, if we did it after the range observable we would do it more times than necessary.
         mergeMap(([delegator, currentRound]) => range(0, delegator.nextUnbondingLockId).pipe(
             mergeMap(unbondingLockId => bondingManager.getDelegatorUnbondingLock(livepeerAppAddress, unbondingLockId).pipe(
                 map(unbondingLockInfo => {
@@ -173,3 +177,8 @@ const unbondingLockInfos$ = () =>
         toArray(),
         map(unbondingLockInfos => unbondingLockInfos.sort(sortByLockId)))
 
+const disableUnbondTokens$ = () =>
+    bondingManager$(api).pipe(
+        mergeMap(bondingManager => bondingManager.maxEarningsClaimsRounds()),
+        zip(currentRound$(), delegatorInfo$()),
+        map(([maxRounds, currentRound, delegatorInfo]) => delegatorInfo.lastClaimRound <= currentRound - maxRounds))

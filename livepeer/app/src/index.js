@@ -13,6 +13,7 @@ let defaultState = {
     appApprovedTokens: 0,
     delegatorInfo: {bondedAmount: 0, delegateAddress: ""},
     currentRound: 0,
+    disableUnbondTokens: false,
     unbondingLockInfos: []
 }
 
