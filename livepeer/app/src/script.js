@@ -8,7 +8,7 @@ import {
     roundsManager$
 } from '../web3/ExternalContracts'
 import {of, range} from "rxjs";
-import {first, mergeMap, map, filter, toArray, zip} from "rxjs/operators"
+import {first, mergeMap, map, filter, toArray, zip, tap} from "rxjs/operators"
 
 const INITIALISE_EVENT = Symbol("INITIALISE_APP")
 const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
@@ -16,10 +16,10 @@ const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
 const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
-//TODO: Add check and button for claimEarnings call.
 //TODO: Add rebond functions.
 //TODO: Enable radspec strings somehow (maybe child contract functions)
 //TODO: Rearrange UI, make actions appear in slide in menu.
+//TODO: More UX and details for ClaimEarnings call.
 
 const initialState = async (state) => {
     return {

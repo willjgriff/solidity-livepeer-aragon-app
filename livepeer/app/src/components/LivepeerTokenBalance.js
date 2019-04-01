@@ -26,7 +26,13 @@ const BalancesCard = styled(Card)`
 const UserBalance = styled(Text.Block)`
     margin-right: 10px;
 `
-const Transfer = styled.div`
+const TransferIn = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 10px;
+`
+const TransferOut = styled.div`
     display: flex;
     flex-direction: row;
     align-items: flex-end;
@@ -41,13 +47,15 @@ const AmountField = styled(Field)`
 `
 const TransferButton = styled(Button)`
     margin-bottom: 4px;
+    width: 40%;
 `
 
-const LivepeerBalance = ({handleTransferTokens, appState}) => {
+const LivepeerBalance = ({handleTransferIn, handleTransferOut, appState}) => {
     const {userLptBalance, appsLptBalance} = appState
 
-    const [transferAmount, setTransferAmount] = useState(0)
-    const [transferAddress, setTransferAddress] = useState(0)
+    const [transferInAmount, setTransferInAmount] = useState(0)
+    const [transferOutAmount, setTransferOutAmount] = useState(0)
+    const [transferOutAddress, setTransferOutAddress] = useState(0)
 
     return (
         <BalanceContainer>
@@ -58,21 +66,30 @@ const LivepeerBalance = ({handleTransferTokens, appState}) => {
                 <Text.Block size="normal">Livepeer App:<br/> {appsLptBalance} LPT</Text.Block>
             </BalancesCard>
 
+            <TransferIn>
+                <AmountField label="Amount:">
+                    <TextInput type="number"
+                               onChange={event => setTransferInAmount(event.target.value)}/>
+                </AmountField>
+
+                <TransferButton mode="strong" onClick={() => handleTransferIn(transferInAmount)}>Transfer In</TransferButton>
+            </TransferIn>
+
             <AddressField label="Address:">
                 <TextInput type="text" wide
-                           onChange={event => setTransferAddress(event.target.value)}/>
+                           onChange={event => setTransferOutAddress(event.target.value)}/>
             </AddressField>
 
-            <Transfer>
+            <TransferOut>
 
                 <AmountField label="Amount:">
                     <TextInput type="number"
-                               onChange={event => setTransferAmount(event.target.value)}/>
+                               onChange={event => setTransferOutAmount(event.target.value)}/>
                 </AmountField>
 
-                <TransferButton mode="strong" onClick={() => handleTransferTokens(transferAddress, transferAmount)}>Transfer Out</TransferButton>
+                <TransferButton mode="strong" onClick={() => handleTransferOut(transferOutAddress, transferOutAmount)}>Transfer Out</TransferButton>
 
-            </Transfer>
+            </TransferOut>
 
         </BalanceContainer>
     )

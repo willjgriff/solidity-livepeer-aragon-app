@@ -4,12 +4,14 @@ import {toDecimals} from "../src/lib/math-utils";
 import {livepeerTokenAddress$, bondingManagerAddress$} from "./ExternalContracts";
 import {map, mergeMap, zip} from "rxjs/operators";
 
+const TOKEN_DECIMALS = 18;
+
 const livepeerTokenApprove = (api, tokenCount) => {
     const abiCoder = new AbiCoder()
 
     bondingManagerAddress$(api).pipe(
         map(bondingManagerAddress => {
-            const convertedTokenCount = toDecimals(tokenCount, 18, false)
+            const convertedTokenCount = toDecimals(tokenCount, TOKEN_DECIMALS, false)
             return abiCoder.encodeFunctionCall(LivepeerTokenApprove, [bondingManagerAddress, convertedTokenCount])
         }),
         zip(livepeerTokenAddress$(api)),
@@ -17,16 +19,24 @@ const livepeerTokenApprove = (api, tokenCount) => {
     ).subscribe()
 }
 
-const transferAppsTokens = (api, sendToAddress, amount) => {
-
-    const adjustedAmount = toDecimals(amount, 18)
+const transferFromApp = (api, sendToAddress, amount) => {
+    const adjustedAmount = toDecimals(amount, TOKEN_DECIMALS)
 
     livepeerTokenAddress$(api).pipe(
         mergeMap(tokenAddress => api.transfer(tokenAddress, sendToAddress, adjustedAmount))
     ).subscribe()
-
 }
 
-export {livepeerTokenApprove, transferAppsTokens}
+const transferToApp = (api, amount) => {
+    const adjustedAmount = toDecimals(amount, TOKEN_DECIMALS)
+
+    console.log("HOLA")
+
+    livepeerTokenAddress$(api).pipe(
+        mergeMap(tokenAddress => api.deposit(tokenAddress, adjustedAmount, { token: { address: tokenAddress, value: adjustedAmount } }))
+    ).subscribe()
+}
+
+export {livepeerTokenApprove, transferFromApp, transferToApp}
 
 

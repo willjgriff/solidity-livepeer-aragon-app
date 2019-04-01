@@ -39,22 +39,13 @@ contract Vault is EtherTokenConstant, AragonApp, DepositableStorage {
     }
 
     /**
-    * @notice Deposit `_value` `_token` to the vault
-    * @param _token Address of the token being transferred
-    * @param _value Amount of tokens being transferred
-    */
-    function deposit(address _token, uint256 _value) external payable isInitialized {
-        _deposit(_token, _value);
-    }
-
-    /**
     * @notice Transfer `_value` `_token` from the Vault to `_to`
     * @param _token Address of the token being transferred
     * @param _to Address of the recipient of tokens
     * @param _value Amount of tokens being transferred
     */
     /* solium-disable-next-line function-order */
-    function transferInternal(address _token, address _to, uint256 _value)
+    function _transfer(address _token, address _to, uint256 _value)
     internal
     {
         require(_value > 0, ERROR_TRANSFER_VALUE_ZERO);

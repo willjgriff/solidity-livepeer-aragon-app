@@ -6,10 +6,12 @@ import {encodeCallScript} from "./utils/evmScript"
 import {bondingManagerAddress$, livepeerTokenAddress$} from "./ExternalContracts";
 import {map, mergeMap, zip} from "rxjs/operators";
 
+const TOKEN_DECIMALS = 18
+
 const approveAndBond = (api, tokenCount, bondToAddress) => {
     const abiCoder = new AbiCoder()
 
-    const convertedTokenCount = toDecimals(tokenCount, 18, false)
+    const convertedTokenCount = toDecimals(tokenCount, TOKEN_DECIMALS, false)
 
     livepeerTokenAddress$(api).pipe(
         zip(bondingManagerAddress$(api)),

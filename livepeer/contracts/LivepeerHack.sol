@@ -33,7 +33,7 @@ contract LivepeerHack is Agent {
     external // This function MUST always be external as the function performs a low level return, exiting the Agent app execution context
     authP(EXECUTE_ROLE, arr(_target, _ethValue, uint256(getSig(_data)))) // bytes4 casted as uint256 sets the bytes as the LSBs
     {
-        Agent.executeInternal(_target, _ethValue, _data);
+        _execute(_target, _ethValue, _data);
     }
 
     /**
@@ -44,7 +44,7 @@ contract LivepeerHack is Agent {
     function forward(bytes _evmScript)
     public
     authP(RUN_SCRIPT_ROLE, arr(getScriptACLParam(_evmScript))) {
-        Agent.forwardInternal(_evmScript);
+        _forward(_evmScript);
     }
 
     /**
@@ -57,6 +57,15 @@ contract LivepeerHack is Agent {
     function transfer(address _token, address _to, uint256 _value)
     external
     authP(TRANSFER_ROLE, arr(_token, _to, _value)) {
-        Vault.transferInternal(_token, _to, _value);
+        _transfer(_token, _to, _value);
+    }
+
+    /**
+    * @notice Deposit `_value` `_token` to the vault
+    * @param _token Address of the token being transferred
+    * @param _value Amount of tokens being transferred
+    */
+    function deposit(address _token, uint256 _value) external payable isInitialized {
+        _deposit(_token, _value);
     }
 }

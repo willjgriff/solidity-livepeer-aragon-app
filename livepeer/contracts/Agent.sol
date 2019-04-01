@@ -33,7 +33,7 @@ contract Agent is IERC165, ERC1271Bytes, IForwarder, IsContract, Vault {
     * @param _data Calldata for the action
     * @return Exits call frame forwarding the return data of the executed call (either error or success data)
     */
-    function executeInternal(address _target, uint256 _ethValue, bytes _data)
+    function _execute(address _target, uint256 _ethValue, bytes _data)
     internal
     {
         bool result = _target.call.value(_ethValue)(_data);
@@ -103,7 +103,7 @@ contract Agent is IERC165, ERC1271Bytes, IForwarder, IsContract, Vault {
     * @dev IForwarder interface conformance. Forwards any token holder action.
     * @param _evmScript Script being executed
     */
-    function forwardInternal(bytes _evmScript)
+    function _forward(bytes _evmScript)
     internal
     {
         bytes memory input = "";

@@ -21,7 +21,7 @@ The in development Livepeer Aragon app using the Agent app. Uses the Aragon `rea
 
 ## Aragon DAO Rinkeby Installation Instructions
 
-Alpha versions of the Livepeer Aragon app are available on Rinkeby through the aragonPM. 
+Experimental versions of the Livepeer Aragon app are available on Rinkeby through the aragonPM. 
 Using the aragonCLI with access to Rinkeby through the staging environment you can install the current version of this app into an existing Aragon DAO on Rinkeby.  
 
 1. To install the aragonCLI:

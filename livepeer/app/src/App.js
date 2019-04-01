@@ -3,7 +3,7 @@ import {Main, AppView} from '@aragon/ui'
 import styled from 'styled-components'
 import {useAragonApi} from '@aragon/api-react'
 
-import {livepeerTokenApprove, transferAppsTokens} from "../web3/LivepeerTokenScripts"
+import {livepeerTokenApprove, transferFromApp, transferToApp} from "../web3/LivepeerTokenScripts"
 import {
     bondingManagerBond,
     bondingManagerUnbond,
@@ -34,7 +34,9 @@ function App() {
 
     const {api, appState} = useAragonApi()
 
-    const transferTokens = (toAddress, amount) => transferAppsTokens(api, toAddress, amount)
+    const transferTokensIn = (amount) => transferToApp(api, amount)
+
+    const transferTokensOut = (toAddress, amount) => transferFromApp(api, toAddress, amount)
 
     const approveTokens = (approveTokenCount) => livepeerTokenApprove(api, approveTokenCount)
 
@@ -56,7 +58,7 @@ function App() {
 
                     <Addresses appState={appState}/>
 
-                    <LivepeerBalance appState={appState} handleTransferTokens={transferTokens}/>
+                    <LivepeerBalance appState={appState} handleTransferIn={transferTokensIn} handleTransferOut={transferTokensOut}/>
 
                     <ApproveTokens appState={appState} handleApproveTokens={approveTokens}/>
 

@@ -7,10 +7,12 @@ import {toDecimals} from "../src/lib/math-utils";
 import {bondingManagerAddress$} from "./ExternalContracts";
 import {mergeMap} from "rxjs/operators";
 
+const TOKEN_DECIMALS = 18
+
 const bondingManagerBond = (api, numberOfTokens, bondToAddress) => {
     const abiCoder = new AbiCoder()
 
-    const convertedTokenCount = toDecimals(numberOfTokens, 18, false)
+    const convertedTokenCount = toDecimals(numberOfTokens, TOKEN_DECIMALS)
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerBondAbi, [convertedTokenCount, bondToAddress])
 
     bondingManagerAddress$(api).pipe(
@@ -21,7 +23,7 @@ const bondingManagerBond = (api, numberOfTokens, bondToAddress) => {
 const bondingManagerUnbond = (api, numberOfTokens) => {
     const abiCoder = new AbiCoder()
 
-    const convertedTokenCount = toDecimals(numberOfTokens, 18, false)
+    const convertedTokenCount = toDecimals(numberOfTokens, TOKEN_DECIMALS)
     const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerUnbondAbi, [convertedTokenCount])
 
     bondingManagerAddress$(api).pipe(
