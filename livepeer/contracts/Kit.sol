@@ -20,7 +20,7 @@ import "@aragon/apps-voting/contracts/Voting.sol";
 import "@aragon/apps-token-manager/contracts/TokenManager.sol";
 import "@aragon/apps-shared-minime/contracts/MiniMeToken.sol";
 
-import "./LivepeerHack.sol";
+import "./LivepeerDelegator.sol";
 
 contract KitBase is APMNamehash {
     ENS public ens;
@@ -51,12 +51,15 @@ contract KitBase is APMNamehash {
 
 contract Kit is KitBase {
     MiniMeTokenFactory tokenFactory;
+    address livepeerController;
 
     uint64 constant PCT = 10 ** 16;
     address constant ANY_ENTITY = address(-1);
 
-    function Kit(ENS ens) KitBase(DAOFactory(0), ens) {
+    function Kit(ENS ens, address _livepeerController) KitBase(DAOFactory(0), ens) {
         tokenFactory = new MiniMeTokenFactory();
+        livepeerController = _livepeerController;
+
     }
 
     function newInstance() {
@@ -69,7 +72,7 @@ contract Kit is KitBase {
         bytes32 votingAppId = apmNamehash("voting");
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
 
-        LivepeerHack app = LivepeerHack(dao.newAppInstance(appId, latestVersionAppBase(appId)));
+        LivepeerDelegator app = LivepeerDelegator(dao.newAppInstance(appId, latestVersionAppBase(appId)));
 
         Voting voting = Voting(dao.newAppInstance(votingAppId, latestVersionAppBase(votingAppId)));
         TokenManager tokenManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
@@ -77,7 +80,7 @@ contract Kit is KitBase {
         MiniMeToken token = tokenFactory.createCloneToken(MiniMeToken(0), 0, "App token", 0, "APP", true);
         token.changeController(tokenManager);
 
-        app.initialize();
+        app.initialize(livepeerController);
         tokenManager.initialize(token, true, 0);
         // Initialize apps
         voting.initialize(token, 50 * PCT, 20 * PCT, 1 days);
@@ -94,6 +97,11 @@ contract Kit is KitBase {
         acl.createPermission(ANY_ENTITY, app, app.RUN_SCRIPT_ROLE(), root);
         acl.createPermission(ANY_ENTITY, app, app.TRANSFER_ROLE(), root);
         acl.createPermission(ANY_ENTITY, app, app.APPROVE_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.BOND_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.APPROVE_AND_BOND_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.CLAIM_EARNINGS_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.UNBOND_ROLE(), root);
+        acl.createPermission(ANY_ENTITY, app, app.WITHDRAW_STAKE_ROLE(), root);
 
 
         // Clean up permissions

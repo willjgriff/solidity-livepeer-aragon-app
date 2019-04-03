@@ -1,54 +1,27 @@
-import {AbiCoder} from "web3-eth-abi"
-import BondingManagerBondAbi from "../abi/bondingManager-bond"
-import BondingManagerUnbondAbi from "../abi/bondingManager-unbond"
-import BondingManagerWithdrawStake from "../abi/bondingManager-withdrawStake"
-import BondingManagerClaimEarnings from "../abi/bondingManager-claimEarnings"
 import {toDecimals} from "../src/lib/math-utils";
-import {bondingManagerAddress$} from "./ExternalContracts";
-import {mergeMap} from "rxjs/operators";
 
 const TOKEN_DECIMALS = 18
 
 const bondingManagerBond = (api, numberOfTokens, bondToAddress) => {
-    const abiCoder = new AbiCoder()
-
     const convertedTokenCount = toDecimals(numberOfTokens, TOKEN_DECIMALS)
-    const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerBondAbi, [convertedTokenCount, bondToAddress])
-
-    bondingManagerAddress$(api).pipe(
-        mergeMap(bondingManagerAddress => api.execute(bondingManagerAddress, 0, encodedFunctionCall))
-    ).subscribe()
+    api.bond(convertedTokenCount, bondToAddress)
+        .subscribe()
 }
 
 const bondingManagerUnbond = (api, numberOfTokens) => {
-    const abiCoder = new AbiCoder()
-
     const convertedTokenCount = toDecimals(numberOfTokens, TOKEN_DECIMALS)
-    const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerUnbondAbi, [convertedTokenCount])
-
-    bondingManagerAddress$(api).pipe(
-        mergeMap(bondingManagerAddress => api.execute(bondingManagerAddress, 0, encodedFunctionCall))
-    ).subscribe()
+    api.unbond(convertedTokenCount)
+        .subscribe()
 }
 
 const bondingManagerWithdraw = (api, unbondingLockId) => {
-    const abiCoder = new AbiCoder()
-
-    const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerWithdrawStake, [unbondingLockId])
-
-    bondingManagerAddress$(api).pipe(
-        mergeMap(bondingManagerAddress => api.execute(bondingManagerAddress, 0, encodedFunctionCall))
-    ).subscribe()
+    api.withdrawStake(unbondingLockId)
+        .subscribe()
 }
 
 const bondingManagerClaimEarnings = (api, upToRound) => {
-    const abiCoder = new AbiCoder()
-
-    const encodedFunctionCall = abiCoder.encodeFunctionCall(BondingManagerClaimEarnings, [upToRound])
-
-    bondingManagerAddress$(api).pipe(
-        mergeMap(bondingManagerAddress => api.execute(bondingManagerAddress, 0, encodedFunctionCall))
-    ).subscribe()
+    api.claimEarnings(upToRound)
+        .subscribe()
 }
 
 export {bondingManagerBond, bondingManagerUnbond, bondingManagerWithdraw, bondingManagerClaimEarnings}

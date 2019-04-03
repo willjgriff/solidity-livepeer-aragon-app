@@ -74,9 +74,14 @@ Depending on your set up, they may require parameter permissions to be set to re
     truffle exec scripts/initialiseFirstRound.js
     ```
 
-4. Copy the Livepeer Controller address, found during the Livepeer deployment after `truffle migrate`, to the configuration file found at `/livepeer/app/config.js`
+4. Copy the Livepeer Controller address, found during the Livepeer deployment after `truffle migrate`, to the configuration file found at `/livepeer/app/config.js` and package.json relevant script.
+
+5. Compile with the local version of truffle, execute in the `/livepeer` directory (this is necessary as the Aragon CLI truffle config doesn't optimize compilation):  
+    ```sh
+    truffle compile --all
+    ```
   
-5. Deploy the Aragon Dao and Livepeer app, execute in the `/livepeer` directory:  
+6. Deploy the Aragon Dao and Livepeer app, execute in the `/livepeer` directory:  
     ```sh
     aragon run
     ```

@@ -1,6 +1,7 @@
 
-const CONTROLLER_ADDRESS = "0xD7572D1D1A1EFe196cEED1914c9C236938033945"
+const CONTROLLER_ADDRESS = "0xa703f00C6D309B4cB8723E7DcC198F91448e02f0" // Local Controller Address
 
+//TODO: Automate setting of this address when on Rinkeby.
 // const CONTROLLER_ADDRESS = "0x37dC71366Ec655093b9930bc816E16e6b587F968" // Rinkeby Controller Address
 
 

@@ -1,18 +1,34 @@
 {
   "roles": [
     {
-      "name": "Approve for BondingManager",
+      "name": "Approve tokens",
       "id": "APPROVE_ROLE",
       "params": []
     },
     {
-      "name": "Execute a function",
-      "id": "EXECUTE_ROLE",
-      "params": [
-        "Target Address",
-        "Eth Value",
-        "Function Sig of Data"
-      ]
+      "name": "Bond to address",
+      "id": "BOND_ROLE",
+      "params": []
+    },
+    {
+      "name": "Approve and Bond to address",
+      "id": "APPROVE_AND_BOND_ROLE",
+      "params": []
+    },
+    {
+      "name": "Claim earnings",
+      "id": "CLAIM_EARNINGS_ROLE",
+      "params": []
+    },
+    {
+      "name": "Unbond",
+      "id": "UNBOND_ROLE",
+      "params": []
+    },
+    {
+      "name": "Withdraw stake",
+      "id": "WITHDRAW_STAKE_ROLE",
+      "params": []
     },
     {
       "name": "Execute a script",
@@ -49,5 +65,5 @@
       "network": "mainnet"
     }
   },
-  "path": "contracts/LivepeerHack.sol"
+  "path": "contracts/LivepeerDelegator.sol"
 }

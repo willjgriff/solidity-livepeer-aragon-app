@@ -50,7 +50,7 @@ const ClaimEarningsButton = styled(Button)`
 
 const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, handleClaimEarnings, appState}) => {
 
-    const {currentRound, disableUnbondTokens, unbondingLockInfos} = appState
+    const {currentRound, disableUnbondTokens, unbondingLockInfos, delegatorInfo} = appState
 
     const [unbondTokenCount, setUnbondTokenCount] = useState(0)
     const [claimEarningsUpToRound, setClaimEarningsUpToRound] = useState(0)
@@ -75,7 +75,7 @@ const UnbondTokens = ({handleUnbondTokens, handleWithdrawTokens, handleClaimEarn
                     </UnbondInput>
 
                     <ClaimEarningsInput>
-                        <ClaimEarningsToRoundField label="Up To Round:">
+                        <ClaimEarningsToRoundField label={`Up To Round: (last: ${delegatorInfo.lastClaimRound})`}>
                             <TextInput type="number"
                                        onChange={event => setClaimEarningsUpToRound(event.target.value)}/>
                         </ClaimEarningsToRoundField>

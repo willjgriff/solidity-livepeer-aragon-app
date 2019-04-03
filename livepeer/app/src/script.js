@@ -16,10 +16,13 @@ const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
 const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
+//TODO: Remove AbiCoder.
 //TODO: Add rebond functions.
-//TODO: Enable radspec strings somehow (maybe child contract functions)
+//TODO: Enable more specific radspec strings with child contract functions, open for discussion but could also help clean up the onNewEvent events.
 //TODO: Rearrange UI, make actions appear in slide in menu.
 //TODO: More UX and details for ClaimEarnings call. Also more disabling of buttons when functions can't be called.
+//TODO: Claim earnings should update bonded tokens with rewarded value.
+//TODO: Bond Tokens should display claimable tokens plus bonded tokens, as that's the amount that is earned on.
 
 const initialState = async (state) => {
     return {
@@ -110,9 +113,10 @@ const onNewEvent = async (state, event) => {
 }
 
 const accountChangedEvent$ = () =>
-    api.accounts().pipe(map(account => {
-        return {event: ACCOUNT_CHANGED_EVENT, account: account}
-    }))
+    api.accounts().pipe(
+        map(account => {
+            return {event: ACCOUNT_CHANGED_EVENT, account: account}
+        }))
 
 api.store(onNewEvent,
     [
@@ -169,7 +173,7 @@ const mapBondingManagerToLockInfo = bondingManager =>
                 }
             }))))
 
-const sortByLockId = (first, second) => first.id > second.id
+const sortByLockId = (first, second) => first.id > second.id ? 1 : -1
 
 const unbondingLockInfos$ = () =>
     bondingManager$(api).pipe(
