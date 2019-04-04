@@ -17,7 +17,6 @@ const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
 const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
-//TODO: Remove AbiCoder.
 //TODO: Add rebond functions.
 //TODO: Replace external contract events with app events to minimise processing.
 //TODO: Rearrange UI, make actions appear in slide in menu.

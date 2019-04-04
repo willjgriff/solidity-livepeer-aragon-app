@@ -8,6 +8,7 @@ import {map, mergeMap, zip} from "rxjs/operators";
 
 const TOKEN_DECIMALS = 18
 
+//TODO: Remove AbiCoder once we remove this.
 const approveAndBond = (api, tokenCount, bondToAddress) => {
     const abiCoder = new AbiCoder()
 
