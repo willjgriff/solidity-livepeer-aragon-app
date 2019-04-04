@@ -4,6 +4,11 @@ import {mergeMap} from "rxjs/operators";
 
 const TOKEN_DECIMALS = 18;
 
+const setLivepeerController = (api, address) => {
+    api.setLivepeerController(address)
+        .subscribe()
+}
+
 const livepeerTokenApprove = (api, tokenCount) => {
     const adjustedTokenCount = toDecimals(tokenCount, TOKEN_DECIMALS)
     api.livepeerTokenApprove(adjustedTokenCount)
@@ -26,4 +31,4 @@ const transferToApp = (api, amount) => {
     ).subscribe()
 }
 
-export {livepeerTokenApprove, transferFromApp, transferToApp}
+export {setLivepeerController, livepeerTokenApprove, transferFromApp, transferToApp}

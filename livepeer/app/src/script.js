@@ -1,6 +1,7 @@
 import '@babel/polyfill'
 import AragonApi from '@aragon/api'
 import {
+    controllerAddress$,
     livepeerTokenAddress$,
     livepeerToken$,
     bondingManagerAddress$,
@@ -18,16 +19,16 @@ let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Remove AbiCoder.
 //TODO: Add rebond functions.
-//TODO: Enable more specific radspec strings with child contract functions, open for discussion but could also help clean up the onNewEvent events.
+//TODO: Replace external contract events with app events to minimise processing.
 //TODO: Rearrange UI, make actions appear in slide in menu.
-//TODO: More UX and details for ClaimEarnings call. Also more disabling of buttons when functions can't be called.
-//TODO: Claim earnings should update bonded tokens with rewarded value.
+//TODO: More disabling of buttons/error handling when functions can't be called.
 //TODO: Bond Tokens should display claimable tokens plus bonded tokens, as that's the amount that is earned on.
 
 const initialState = async (state) => {
     return {
         ...state,
         livepeerTokenAddress: await livepeerTokenAddress$(api).toPromise(),
+        livepeerControllerAddress: await controllerAddress$(api).toPromise(),
         userLptBalance: await userLptBalance$().toPromise(),
         appsLptBalance: await appLptBalance$().toPromise(),
         appApprovedTokens: await appApprovedTokens$().toPromise(),
@@ -63,6 +64,12 @@ const onNewEvent = async (state, event) => {
                 ...initState,
                 appAddress: livepeerAppAddress
             }
+        case 'NewControllerSet':
+            console.log("NEW CONTROLLER SET")
+            return {
+                ...state,
+                livepeerControllerAddress: event.returnValues.livepeerController
+            }
         case 'Transfer':
             console.log("TRANSFER")
             return {
@@ -84,6 +91,12 @@ const onNewEvent = async (state, event) => {
                 appApprovedTokens: await appApprovedTokens$().toPromise(),
                 appsLptBalance: await appLptBalance$().toPromise(),
                 disableUnbondTokens: await disableUnbondTokens$().toPromise()
+            }
+        case 'ClaimEarnings':
+            console.log("CLAIM EARNINGS")
+            return {
+                ...state,
+                delegatorInfo: await delegatorInfo$().toPromise()
             }
         case 'Unbond':
             console.log("UNBOND")

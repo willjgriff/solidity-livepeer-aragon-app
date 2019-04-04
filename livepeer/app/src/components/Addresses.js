@@ -1,5 +1,5 @@
-import React from "react"
-import {Text, Card} from "@aragon/ui"
+import React, {useState} from "react"
+import {Text, Card, TextInput, Field, Button} from "@aragon/ui"
 import styled from 'styled-components'
 
 const AddressContainer = styled.div`
@@ -20,9 +20,19 @@ const AddressCard = styled(Card)`
     margin-bottom: 10px;
     width: auto;
 `
+const NewController = styled(Field)`
+    margin-right: 20px;
+    margin-bottom: 20px;
+`
+const ChangeControllerButton = styled(Button)`
+    margin-bottom: 4px;
+    width: 40%;
+`
 
-const Addresses = ({handleTransferTokens, appState}) => {
-    const {appAddress, livepeerTokenAddress} = appState
+const Addresses = ({handleNewController, appState}) => {
+    const {appAddress, livepeerTokenAddress, livepeerControllerAddress} = appState
+
+    const [newController, setNewController] = useState(0)
 
     return (
         <AddressContainer>
@@ -36,6 +46,19 @@ const Addresses = ({handleTransferTokens, appState}) => {
             <AddressCard>
                 <Text.Block size="normal">{livepeerTokenAddress}</Text.Block>
             </AddressCard>
+
+            <Text.Block weight="bold" size="normal">Livepeer Controller Address</Text.Block>
+            <AddressCard>
+                <Text.Block size="normal">{livepeerControllerAddress}</Text.Block>
+            </AddressCard>
+
+            <NewController label="New Controller:">
+                <TextInput type="text" wide
+                           onChange={event => setNewController(event.target.value)}/>
+            </NewController>
+
+            <ChangeControllerButton mode="strong" onClick={() => handleNewController(newController)}>Set
+                Controller</ChangeControllerButton>
 
         </AddressContainer>
     )

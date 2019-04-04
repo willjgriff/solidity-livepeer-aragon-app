@@ -18,12 +18,13 @@ import "./IController.sol";
 
  LivepeerDelegator includes a reference to a modified Agent contract which includes a reference to a modified Vault contract.
 
- TODO: Add function allowing update of Livepeer Controller
  TODO: Get decimal numbers from LPT contract in Radspec strings
  TODO: Remove trailing zeros from fractional token amount (not sure how)
+ TODO: Write tests
  */
 contract LivepeerDelegator is Agent {
 
+    bytes32 public constant SET_CONTROLLER_ROLE = keccak256("SET_CONTROLLER_ROLE");
     bytes32 public constant APPROVE_ROLE = keccak256("APPROVE_ROLE");
     bytes32 public constant BOND_ROLE = keccak256("BOND_ROLE");
     bytes32 public constant APPROVE_AND_BOND_ROLE = keccak256("APPROVE_AND_BOND_ROLE");
@@ -33,7 +34,9 @@ contract LivepeerDelegator is Agent {
 
     IController public livepeerController;
 
-    event AppInitialized();
+    event AppInitialized(address livepeerController);
+    event ClaimEarnings(uint256 upToRound);
+    event NewControllerSet(address livepeerController);
 
     /**
     * @notice Initialize the LivepeerHack contract
@@ -44,7 +47,16 @@ contract LivepeerDelegator is Agent {
         livepeerController = IController(_livepeerController);
         setDepositable(true);
 
-        emit AppInitialized();
+        emit AppInitialized(_livepeerController);
+    }
+
+    /**
+    * @notice Update the Livepeer Controller address to `_address`
+    * @param _address New Livepeer Controller address
+    */
+    function setLivepeerController(address _address) external auth(SET_CONTROLLER_ROLE) {
+        livepeerController = IController(_address);
+        emit NewControllerSet(_address);
     }
 
     /**
@@ -53,27 +65,40 @@ contract LivepeerDelegator is Agent {
     * @param _value The amount of tokens to approve
     */
     function livepeerTokenApprove(uint256 _value) external auth(APPROVE_ROLE) {
-        _livepeerTokenApprove(_value);
+        bytes32 livepeerTokenId = keccak256("LivepeerToken");
+        address livepeerTokenAddress = livepeerController.getContract(livepeerTokenId);
+
+        bytes32 BondingManagerId = keccak256("BondingManager");
+        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+
+        string memory functionSignature = "approve(address,uint256)";
+        bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, bondingManagerAddress, _value);
+
+        _execute(livepeerTokenAddress, 0, encodedFunctionCall);
     }
 
     /**
-    * @notice Bond `_amount` tokens to `_to`
+    * @notice Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens to `_to`
     * @param _amount The amount of tokens to bond
     * @param _to The address to bond to
     */
     function bond(uint256 _amount, address _to) external auth(BOND_ROLE) {
-        _bond(_amount, _to);
+        bytes32 BondingManagerId = keccak256("BondingManager");
+        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+
+        string memory functionSignature = "bond(uint256,address)";
+        bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount, _to);
+
+        _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }
 
     /**
-    * @notice Approve and Bond `_amount` tokens to `_to`
+    * @notice Approve and Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens to `_to`
     * @param _amount The amount of tokens to approve and bond
     * @param _to The address to bond to
     */
-    // TODO: This doesn't work, only executes approve, not bond.
     function approveAndBond(uint256 _amount, address _to) external auth(APPROVE_AND_BOND_ROLE) {
-        _livepeerTokenApprove(_amount);
-        _bond(_amount, _to);
+        // TODO: Requires constructing a forwarder script, can't use execute twice as it ends execution.
     }
 
     /**
@@ -87,11 +112,13 @@ contract LivepeerDelegator is Agent {
         string memory functionSignature = "claimEarnings(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _endRound);
 
+        emit ClaimEarnings(_endRound);
+
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }
 
     /**
-    * @notice Unbond `_amount` tokens
+    * @notice Unbond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens
     * @param _amount The amount of tokens to unbond
     */
     function unbond(uint256 _amount) external auth(UNBOND_ROLE) {
@@ -130,7 +157,7 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Transfer `_value` `_token` from the Livepeer App to `_to`
+    * @notice Transfer `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` from the Livepeer App to `_to`
     * @param _token Address of the token being transferred
     * @param _to Address of the recipient of tokens
     * @param _value Amount of tokens being transferred
@@ -141,7 +168,7 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Deposit `_value` `_token` to the Livepeer App
+    * @notice Deposit `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` to the Livepeer App
     * @param _token Address of the token being transferred
     * @param _value Amount of tokens being transferred
     */
@@ -149,26 +176,4 @@ contract LivepeerDelegator is Agent {
         _deposit(_token, _value);
     }
 
-    function _livepeerTokenApprove(uint256 _value) internal {
-        bytes32 livepeerTokenId = keccak256("LivepeerToken");
-        address livepeerTokenAddress = livepeerController.getContract(livepeerTokenId);
-
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
-
-        string memory functionSignature = "approve(address,uint256)";
-        bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, bondingManagerAddress, _value);
-
-        _execute(livepeerTokenAddress, 0, encodedFunctionCall);
-    }
-
-    function _bond(uint256 _amount, address _to) internal {
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
-
-        string memory functionSignature = "bond(uint256,address)";
-        bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount, _to);
-
-        _execute(bondingManagerAddress, 0, encodedFunctionCall);
-    }
 }

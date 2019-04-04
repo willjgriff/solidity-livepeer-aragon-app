@@ -1,6 +1,11 @@
 {
   "roles": [
     {
+      "name": "Set Livepeer Controller",
+      "id": "SET_CONTROLLER_ROLE",
+      "params": []
+    },
+    {
       "name": "Approve tokens",
       "id": "APPROVE_ROLE",
       "params": []
