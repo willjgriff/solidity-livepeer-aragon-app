@@ -38,7 +38,11 @@ contract LivepeerDelegator is Agent {
 
     event AppInitialized(address livepeerController);
     event NewControllerSet(address livepeerController);
-    event ClaimEarnings(uint256 upToRound);
+    event LivepeerDelegatorApproval(uint256 value);
+    event LivepeerDelegatorBond(uint256 amount, address to);
+    event LivepeerDelegatorClaimEarnings(uint256 upToRound);
+    event LivepeerDelegatorUnbond(uint256 amount);
+    event LivepeerDelegatorWithdrawStake(uint256 unbondingLockId);
 
     /**
     * @notice Initialize the LivepeerHack contract
@@ -73,6 +77,8 @@ contract LivepeerDelegator is Agent {
         string memory functionSignature = "approve(address,uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, bondingManagerAddress, _value);
 
+        emit LivepeerDelegatorApproval(_value);
+
         _execute(livepeerTokenAddress, 0, encodedFunctionCall);
     }
 
@@ -86,6 +92,8 @@ contract LivepeerDelegator is Agent {
 
         string memory functionSignature = "bond(uint256,address)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount, _to);
+
+        emit LivepeerDelegatorBond(_amount, _to);
 
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }
@@ -109,6 +117,9 @@ contract LivepeerDelegator is Agent {
         bytes memory specAndApprove = BytesLib.concat(spec1, approveScript);
         bytes memory specAndApproveAndBond = BytesLib.concat(specAndApprove, bondScript);
 
+        emit LivepeerDelegatorApproval(_amount);
+        emit LivepeerDelegatorBond(_amount, _to);
+
         _forward(specAndApproveAndBond);
     }
 
@@ -122,7 +133,7 @@ contract LivepeerDelegator is Agent {
         string memory functionSignature = "claimEarnings(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _endRound);
 
-        emit ClaimEarnings(_endRound);
+        emit LivepeerDelegatorClaimEarnings(_endRound);
 
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }
@@ -137,6 +148,8 @@ contract LivepeerDelegator is Agent {
         string memory functionSignature = "unbond(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount);
 
+        emit LivepeerDelegatorUnbond(_amount);
+
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }
 
@@ -149,6 +162,8 @@ contract LivepeerDelegator is Agent {
 
         string memory functionSignature = "withdrawStake(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _unbondingLockId);
+
+        emit LivepeerDelegatorWithdrawStake(_unbondingLockId);
 
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
     }

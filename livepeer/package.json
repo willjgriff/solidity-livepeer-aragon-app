@@ -21,7 +21,7 @@
     "start:ipfs": "aragon run",
     "start:http": "aragon run --http localhost:8001 --http-served-from ./dist",
     "start:ipfs:template": "npm run start:ipfs -- --template Kit --template-init @ARAGON_ENS",
-    "start:http:template": "npm run start:http -- --template Kit --template-init @ARAGON_ENS 0x80e17dB1e81b3fBd2900B802D939792b850f0937",
+    "start:http:template": "npm run start:http -- --template Kit --template-init @ARAGON_ENS 0x3360C1F01e6cE5Ac034e740C01C8e4bfCac8F05b",
     "prepare": "cd app && npm install && cd ..",
     "start:app": "cd app && npm start && cd ..",
     "test": "aragon contracts test",
