@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "./Agent.sol";
 import "./IController.sol";
+import "solidity-bytes-utils/contracts/BytesLib.sol";
 
 /*
  This fairly hacky contract was originally a workaround for some limitations with using Agent.sol directly and the aragonAPI,
@@ -62,15 +63,12 @@ contract LivepeerDelegator is Agent {
 
     /**
     * @notice Approve the Bonding Manager to spend
-              `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` tokens from the Livepeer App.
+              `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` LPT tokens from the Livepeer App.
     * @param _value The amount of tokens to approve
     */
     function livepeerTokenApprove(uint256 _value) external auth(APPROVE_ROLE) {
-        bytes32 livepeerTokenId = keccak256("LivepeerToken");
-        address livepeerTokenAddress = livepeerController.getContract(livepeerTokenId);
-
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+        address livepeerTokenAddress = _getLivepeerContractAddress("LivepeerToken");
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
         string memory functionSignature = "approve(address,uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, bondingManagerAddress, _value);
@@ -79,13 +77,12 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens to `_to`
+    * @notice Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` LPT tokens to `_to`
     * @param _amount The amount of tokens to bond
     * @param _to The address to bond to
     */
     function bond(uint256 _amount, address _to) external auth(BOND_ROLE) {
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
         string memory functionSignature = "bond(uint256,address)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount, _to);
@@ -94,13 +91,25 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Approve and Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens to `_to`
+    * @notice Approve and Bond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` LPT tokens to `_to`
     * @param _amount The amount of tokens to approve and bond
     * @param _to The address to bond to
     */
     function approveAndBond(uint256 _amount, address _to) external auth(APPROVE_AND_BOND_ROLE) {
-        // TODO: Requires constructing a forwarder script, can't use execute twice as it ends execution.
+        bytes memory spec1 = hex"00000001";
+        address livepeerTokenAddress = _getLivepeerContractAddress("LivepeerToken");
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
+        bytes memory approveEncoded = abi.encodeWithSignature("approve(address,uint256)", bondingManagerAddress, _amount);
+        bytes memory bondEncoded = abi.encodeWithSignature("bond(uint256,address)", _amount, _to);
+
+        bytes memory approveScript = _createForwarderScript(livepeerTokenAddress, approveEncoded);
+        bytes memory bondScript = _createForwarderScript(bondingManagerAddress, bondEncoded);
+
+        bytes memory specAndApprove = BytesLib.concat(spec1, approveScript);
+        bytes memory specAndApproveAndBond = BytesLib.concat(specAndApprove, bondScript);
+
+        _forward(specAndApproveAndBond);
     }
 
     /**
@@ -108,8 +117,7 @@ contract LivepeerDelegator is Agent {
     * @param _endRound Last round to claim earnings up to
     */
     function claimEarnings(uint256 _endRound) external auth(CLAIM_EARNINGS_ROLE) {
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
         string memory functionSignature = "claimEarnings(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _endRound);
@@ -120,12 +128,11 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Unbond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` tokens
+    * @notice Unbond `_amount / 10^18``_amount % 10^18 > 0 ? '.' + _amount % 10^18 : ''` LPT tokens
     * @param _amount The amount of tokens to unbond
     */
     function unbond(uint256 _amount) external auth(UNBOND_ROLE) {
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
         string memory functionSignature = "unbond(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _amount);
@@ -138,24 +145,12 @@ contract LivepeerDelegator is Agent {
     * @param _unbondingLockId The unbonding lock ID
     */
     function withdrawStake(uint256 _unbondingLockId) external auth(WITHDRAW_STAKE_ROLE) {
-        bytes32 BondingManagerId = keccak256("BondingManager");
-        address bondingManagerAddress = livepeerController.getContract(BondingManagerId);
+        address bondingManagerAddress = _getLivepeerContractAddress("BondingManager");
 
         string memory functionSignature = "withdrawStake(uint256)";
         bytes memory encodedFunctionCall = abi.encodeWithSignature(functionSignature, _unbondingLockId);
 
         _execute(bondingManagerAddress, 0, encodedFunctionCall);
-    }
-
-    /**
-    * @notice Execute the script as the Agent app
-    * @dev IForwarder interface conformance. Forwards any token holder action.
-    * @param _evmScript Script being executed
-    */
-    function forward(bytes _evmScript)
-    public
-    authP(RUN_SCRIPT_ROLE, arr(getScriptACLParam(_evmScript))) {
-        _forward(_evmScript);
     }
 
     /**
@@ -176,6 +171,21 @@ contract LivepeerDelegator is Agent {
     */
     function deposit(address _token, uint256 _value) external payable isInitialized {
         _deposit(_token, _value);
+    }
+
+    function _getLivepeerContractAddress(string memory livepeerContract) internal view returns (address) {
+        bytes32 contractId = keccak256(livepeerContract);
+        return livepeerController.getContract(contractId);
+    }
+
+    function _createForwarderScript(address toAddress, bytes memory functionCall) internal pure returns (bytes) {
+        bytes memory toAddressBytes = abi.encodePacked(toAddress);
+        bytes memory functionCallLength = abi.encodePacked(bytes4(functionCall.length));
+
+        bytes memory addressAndLength = BytesLib.concat(toAddressBytes, functionCallLength);
+        bytes memory addressAndLengthAndCall = BytesLib.concat(addressAndLength, functionCall);
+
+        return addressAndLengthAndCall;
     }
 
 }
