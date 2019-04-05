@@ -8,7 +8,7 @@ import {
     bondingManager$,
     roundsManager$
 } from '../web3/ExternalContracts'
-import {of, range, merge} from "rxjs";
+import {range} from "rxjs";
 import {first, mergeMap, map, filter, toArray, zip} from "rxjs/operators"
 
 const ACCOUNT_CHANGED_EVENT = Symbol("ACCOUNT_CHANGED")
