@@ -1,7 +1,7 @@
 const Controller = artifacts.require("Controller")
 const AdjustableRoundsManager = artifacts.require("AdjustableRoundsManager")
 
-const {contractId} = require("../utils/helpers")
+const {contractId} = require("../../utils/helpers")
 
 const roundLength = 10 // blocks. Actual value is 5760 ~ 24 hours
 

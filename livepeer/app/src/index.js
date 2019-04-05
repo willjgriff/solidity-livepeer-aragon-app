@@ -5,13 +5,15 @@ import App from './App'
 import {AragonApi} from '@aragon/api-react'
 import {fromDecimals} from "./lib/math-utils";
 
+const TOKEN_DECIMALS = 18;
+
 let defaultState = {
     appAddress: "0x0000000000000000000000000000000000000000",
     livepeerTokenAddress: "0x0000000000000000000000000000000000000000",
     userLptBalance: 0,
     appsLptBalance: 0,
     appApprovedTokens: 0,
-    delegatorInfo: {bondedAmount: 0, delegateAddress: ""},
+    delegatorInfo: {bondedAmount: 0, delegateAddress: "", lastClaimRound: 0, pendingStake: 0},
     currentRound: 0,
     disableUnbondTokens: false,
     unbondingLockInfos: []
@@ -23,22 +25,29 @@ const reducer = state => {
     } else {
         return {
             ...state,
-            userLptBalance: fromDecimals(state.userLptBalance.toString(), 18),
-            appsLptBalance: fromDecimals(state.appsLptBalance.toString(), 18),
-            appApprovedTokens: fromDecimals(state.appApprovedTokens.toString(), 18),
+            userLptBalance: fromDecimals(state.userLptBalance.toString(), TOKEN_DECIMALS),
+            appsLptBalance: fromDecimals(state.appsLptBalance.toString(), TOKEN_DECIMALS),
+            appApprovedTokens: fromDecimals(state.appApprovedTokens.toString(), TOKEN_DECIMALS),
             delegatorInfo: {
                 ...state.delegatorInfo,
-                bondedAmount: fromDecimals(state.delegatorInfo.bondedAmount.toString(), 18),
+                totalStake: calculateTotalStake(state.delegatorInfo)
             },
             unbondingLockInfos: state.unbondingLockInfos.map(unbondingLockInfo => {
                 return {
                     ...unbondingLockInfo,
-                    amount: fromDecimals(unbondingLockInfo.amount, 18)
+                    amount: fromDecimals(unbondingLockInfo.amount, TOKEN_DECIMALS)
                 }
             })
-
         }
     }
+}
+
+//TODO: Fix the null check.
+const calculateTotalStake = (delegatorInfo) => {
+    const bondedAmount = fromDecimals(delegatorInfo.bondedAmount.toString(), TOKEN_DECIMALS)
+    const pendingStake = fromDecimals(delegatorInfo.pendingStake ? delegatorInfo.pendingStake.toString() : "0", TOKEN_DECIMALS)
+
+    return Math.max(bondedAmount, pendingStake)
 }
 
 ReactDOM.render(

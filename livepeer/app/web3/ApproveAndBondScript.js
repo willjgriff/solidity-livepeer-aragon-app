@@ -28,6 +28,8 @@ const approveAndBond = (api, tokenCount, bondToAddress) => {
             const approveAction = {to: livepeerTokenAddress, calldata: approveEncodedFunctionCall}
             const bondAction = {to: bondingManagerAddress, calldata: bondEncodedFunctionCall}
 
+            console.log(`Approve encoded call: ${approveAction}`)
+
             const encodedCallScript = encodeCallScript([approveAction, bondAction])
 
             console.log(encodedCallScript)

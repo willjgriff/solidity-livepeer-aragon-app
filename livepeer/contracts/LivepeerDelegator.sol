@@ -4,7 +4,8 @@ import "./Agent.sol";
 import "./IController.sol";
 
 /*
- This fairly hacky contract is a workaround for some limitations with Agent.sol and the aragonAPI.
+ This fairly hacky contract was originally a workaround for some limitations with using Agent.sol directly and the aragonAPI,
+ outlined below, and has become somewhat necessary.
  1) We cannot access functions on inherited contracts in the aragonAPI so we need to hoist some functions into this child contract.
  2) Since we can't set permission params using the UI, necessary to appropriately restrict access to Agent.sol functions, we can create
     custom permissions applied to custom and hoisted functions, which can be modified in the UI.
@@ -35,8 +36,8 @@ contract LivepeerDelegator is Agent {
     IController public livepeerController;
 
     event AppInitialized(address livepeerController);
-    event ClaimEarnings(uint256 upToRound);
     event NewControllerSet(address livepeerController);
+    event ClaimEarnings(uint256 upToRound);
 
     /**
     * @notice Initialize the LivepeerHack contract
@@ -99,6 +100,7 @@ contract LivepeerDelegator is Agent {
     */
     function approveAndBond(uint256 _amount, address _to) external auth(APPROVE_AND_BOND_ROLE) {
         // TODO: Requires constructing a forwarder script, can't use execute twice as it ends execution.
+
     }
 
     /**
@@ -157,7 +159,7 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Transfer `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` from the Livepeer App to `_to`
+    * @notice Transfer `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` tokens from the Livepeer App to `_to`
     * @param _token Address of the token being transferred
     * @param _to Address of the recipient of tokens
     * @param _value Amount of tokens being transferred
@@ -168,7 +170,7 @@ contract LivepeerDelegator is Agent {
     }
 
     /**
-    * @notice Deposit `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` to the Livepeer App
+    * @notice Deposit `_value / 10^18``_value % 10^18 > 0 ? '.' + _value % 10^18 : ''` `_token` tokens to the Livepeer App
     * @param _token Address of the token being transferred
     * @param _value Amount of tokens being transferred
     */

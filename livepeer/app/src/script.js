@@ -18,7 +18,7 @@ const api = new AragonApi()
 let livepeerAppAddress = "0x0000000000000000000000000000000000000000"
 
 //TODO: Add rebond functions.
-//TODO: Replace external contract events with app events to minimise processing.
+//TODO: Replace most external contract events with app events to minimise processing and complexity
 //TODO: Rearrange UI, make actions appear in slide in menu.
 //TODO: More disabling of buttons/error handling when functions can't be called.
 //TODO: Bond Tokens should display claimable tokens plus bonded tokens, as that's the amount that is earned on.
@@ -43,16 +43,11 @@ const onNewEvent = async (state, event) => {
     switch (event.event) {
         // TODO: Work out when the store emits, and why it emits lots of events on init (it isn't due to cache/cookies)
         //  then sort out storing of the app address for the script. Is currently confusing and potentially unreliable.
-        case INITIALISE_EVENT:
-            console.log("INITIALISE")
-            return await initialState(state)
-        case ACCOUNT_CHANGED_EVENT:
-            console.log("ACCOUNT CHANGED")
-            return {
-                ...state,
-                userLptBalance: await userLptBalance$().toPromise()
-            }
-        case 'Execute':
+        // case INITIALISE_EVENT:
+        //     console.log("INITIALISE")
+        //     return await initialState(state)
+            // TODO: Determine if we need to listen to execute here (definitely overkill but sometimes appinitialized isn't fired...)
+        // case 'Execute':
         case 'AppInitialized':
             console.log("APP INITIALIZED OR EXECUTE")
             livepeerAppAddress = event.address
@@ -69,6 +64,7 @@ const onNewEvent = async (state, event) => {
                 ...state,
                 livepeerControllerAddress: event.returnValues.livepeerController
             }
+            // Can be replaced, as long as VaultDeposit is added
         case 'Transfer':
             console.log("TRANSFER")
             return {
@@ -76,12 +72,14 @@ const onNewEvent = async (state, event) => {
                 userLptBalance: await userLptBalance$().toPromise(),
                 appsLptBalance: await appLptBalance$().toPromise()
             }
+            // Can be replaced
         case 'Approval':
             console.log("APPROVAL")
             return {
                 ...state,
                 appApprovedTokens: await appApprovedTokens$().toPromise()
             }
+            // Can be replaced
         case 'Bond':
             console.log("BOND")
             return {
@@ -91,12 +89,20 @@ const onNewEvent = async (state, event) => {
                 appsLptBalance: await appLptBalance$().toPromise(),
                 disableUnbondTokens: await disableUnbondTokens$().toPromise()
             }
+        case 'Reward':
+            console.log("REWARD")
+            return {
+                ...state,
+                delegatorInfo: await delegatorInfo$().toPromise()
+            }
+            // Already from livepeer app.
         case 'ClaimEarnings':
             console.log("CLAIM EARNINGS")
             return {
                 ...state,
                 delegatorInfo: await delegatorInfo$().toPromise()
             }
+            // Can be replaced
         case 'Unbond':
             console.log("UNBOND")
             return {
@@ -112,12 +118,19 @@ const onNewEvent = async (state, event) => {
                 unbondingLockInfos: await unbondingLockInfos$().toPromise(),
                 disableUnbondTokens: await disableUnbondTokens$().toPromise()
             }
+            // Can be replaced
         case 'WithdrawStake':
             console.log("WITHDRAW STAKE")
             return {
                 ...state,
                 unbondingLockInfos: await unbondingLockInfos$().toPromise(),
                 appsLptBalance: await appLptBalance$().toPromise()
+            }
+        case ACCOUNT_CHANGED_EVENT:
+            console.log("ACCOUNT CHANGED")
+            return {
+                ...state,
+                userLptBalance: await userLptBalance$().toPromise()
             }
         default:
             return state
@@ -155,20 +168,27 @@ const appApprovedTokens$ = () =>
         zip(bondingManagerAddress$(api)),
         mergeMap(([token, bondingManagerAddress]) => token.allowance(livepeerAppAddress, bondingManagerAddress)))
 
-const delegatorInfo$ = () =>
-    bondingManager$(api).pipe(
-        mergeMap(bondingManager => bondingManager.getDelegator(livepeerAppAddress)),
-        map(delegator => {
-            return {
-                bondedAmount: delegator.bondedAmount,
-                delegateAddress: delegator.delegateAddress,
-                lastClaimRound: delegator.lastClaimRound
-            }
-        }))
-
 const currentRound$ = () =>
     roundsManager$(api).pipe(
         mergeMap(roundsManager => roundsManager.currentRound()))
+
+const pendingStake$ = () =>
+    bondingManager$(api).pipe(
+        zip(currentRound$()),
+        mergeMap(([bondingManager, currentRound]) => bondingManager.pendingStake(livepeerAppAddress, currentRound)))
+
+const delegatorInfo$ = () =>
+    bondingManager$(api).pipe(
+        mergeMap(bondingManager => bondingManager.getDelegator(livepeerAppAddress)),
+        zip(pendingStake$()),
+        map(([delegator, pendingStake]) => {
+            return {
+                bondedAmount: delegator.bondedAmount,
+                delegateAddress: delegator.delegateAddress,
+                lastClaimRound: delegator.lastClaimRound,
+                pendingStake: pendingStake
+            }
+        }))
 
 const mapBondingManagerToLockInfo = bondingManager =>
     bondingManager.getDelegator(livepeerAppAddress).pipe(

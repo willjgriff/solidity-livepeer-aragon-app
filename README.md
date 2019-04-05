@@ -14,7 +14,8 @@ Initial experimental Solidity tests between the Aragon Agent.sol and the Livepee
 ### livepeer-protocol
 The full livepeer contract deployment for testing locally. Modified to compile with the current version of Truffle v5.0.6. Includes 2 extra truffle scripts:  
 - `initialiseFirstRound.js` for preparing the BondingManager to be bonded too after initial deployment.  
-- `skipRoundAndInitialise.js` for skipping a specified number of Livepeer rounds, required for speeding up the protocol for testing.  
+- `skipRoundAndInitialise.js` for skipping a specified number of Livepeer rounds, required for speeding up the protocol for testing.
+- `rewardWithLpt.js` for declaring account[0] as a transcoder, doing the necessary setup and calling reward.  
 
 ### livepeer
 The in development Livepeer Aragon app using the Agent app. Uses the Aragon `react-kit` template. Currently includes basic functions including approve, bond, unbond, withdraw and transfer. 
@@ -39,7 +40,7 @@ aragon apm info livepeer.open.aragonpm.eth --environment staging
 
 To install the Livepeer Aragon app into an existing Aragon DAO:  
 ```sh
-dao install <DAO Address> livepeer.open.aragonpm.eth --set-permissions open --environment staging
+dao install <DAO Address> livepeer.open.aragonpm.eth --set-permissions open --environment staging --app-init-args 0x37dC71366Ec655093b9930bc816E16e6b587F968
 ```
 Note the success of this call could be dependant on the permissions set in the DAO. Ensure the account connected can action the Manage Apps permission either directly or through a forwarder eg the Voting app. See Permissions -> Kernal in the UI to check.  
 
@@ -71,10 +72,10 @@ Depending on your set up, they may require parameter permissions to be set to re
 3. Prepare Livepeer contracts, execute in the `/livepeer-protocol` directory:  
     ```sh
     truffle migrate  
-    truffle exec scripts/initialiseFirstRound.js
+    truffle exec scripts/livepeerAragonApp/initialiseFirstRound.js
     ```
 
-4. Copy the Livepeer Controller address, found during the Livepeer deployment after `truffle migrate`, to the configuration file found at `/livepeer/app/config.js` and package.json relevant script.
+4. Copy the Livepeer Controller address, found during the Livepeer deployment after `truffle migrate`, to the package.json relevant script.
 
 5. Compile with the local version of truffle, execute in the `/livepeer` directory (this is necessary as the Aragon CLI truffle config doesn't optimize compilation):  
     ```sh
@@ -88,5 +89,5 @@ Depending on your set up, they may require parameter permissions to be set to re
 
 Finally, before unbonding or withdrawing, you must skip one or more Livepeer rounds and initialise the latest one. To do this, modify the constants as necessary and execute this in the `/livepeer-protocol` directory:  
 ```sh
-truffle exec scripts/skipRoundAndInitialise.js
+truffle exec scripts/livepeerAragonApp/skipRoundAndInitialise.js
 ```

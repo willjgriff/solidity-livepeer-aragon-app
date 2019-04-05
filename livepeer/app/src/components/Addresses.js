@@ -26,7 +26,7 @@ const NewController = styled(Field)`
 `
 const ChangeControllerButton = styled(Button)`
     margin-bottom: 4px;
-    width: 40%;
+    width: 50%;
 `
 
 const Addresses = ({handleNewController, appState}) => {
@@ -52,13 +52,13 @@ const Addresses = ({handleNewController, appState}) => {
                 <Text.Block size="normal">{livepeerControllerAddress}</Text.Block>
             </AddressCard>
 
-            <NewController label="New Controller:">
-                <TextInput type="text" wide
-                           onChange={event => setNewController(event.target.value)}/>
-            </NewController>
+            {/*<NewController label="New Controller:">*/}
+                {/*<TextInput type="text" wide*/}
+                           {/*onChange={event => setNewController(event.target.value)}/>*/}
+            {/*</NewController>*/}
 
-            <ChangeControllerButton mode="strong" onClick={() => handleNewController(newController)}>Set
-                Controller</ChangeControllerButton>
+            {/*<ChangeControllerButton mode="strong" onClick={() => handleNewController(newController)}>Set Livepeer*/}
+                {/*Controller</ChangeControllerButton>*/}
 
         </AddressContainer>
     )

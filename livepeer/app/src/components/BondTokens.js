@@ -49,7 +49,7 @@ const BondToAddressField = styled(Field)`
 
 const BondTokens = ({handleBondTokens, handleApproveAndBond, appState}) => {
 
-    const {bondedAmount, delegateAddress} = appState.delegatorInfo
+    const {totalStake, delegateAddress} = appState.delegatorInfo
 
     const [bondTokenCount, setBondTokenCount] = useState(0)
     const [bondToAddress, setBondToAddress] = useState(0)
@@ -60,7 +60,7 @@ const BondTokens = ({handleBondTokens, handleApproveAndBond, appState}) => {
             <Text.Block size="normal" weight="bold">Bond Tokens</Text.Block>
 
             <BondedTokensCard>
-                <Text.Block>{bondedAmount} LPT bonded to {delegateAddress}</Text.Block>
+                <Text.Block>{totalStake} LPT bonded to {delegateAddress}</Text.Block>
             </BondedTokensCard>
 
             <BondInputFields>

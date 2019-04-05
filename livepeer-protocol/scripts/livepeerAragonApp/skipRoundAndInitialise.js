@@ -1,9 +1,9 @@
 const Controller = artifacts.require("Controller")
 const AdjustableRoundsManager = artifacts.require("AdjustableRoundsManager")
 
-const {contractId} = require("../utils/helpers")
+const {contractId} = require("../../utils/helpers")
 
-const SKIP_NUMBER_OF_ROUNDS = 10;
+const SKIP_NUMBER_OF_ROUNDS = 1;
 
 module.exports = async () => {
     let controller
