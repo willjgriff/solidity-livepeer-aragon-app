@@ -1,7 +1,5 @@
 ## This project has moved to: https://github.com/videoDAC/livepeer-delegator-aragon-app  
 
-The below details are left as is as they still apply to this repo but it will no longer be maintained.  
-
 # solidity-livepeer-aragon-app
 Livepeer Delegator Aragon app for managing Livepeer Delegation actions.
 
